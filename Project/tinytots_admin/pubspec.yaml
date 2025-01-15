@@ -9,6 +9,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  supabase_flutter: ^2.8.2
 
 dev_dependencies:
   flutter_test:
@@ -17,3 +18,10 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/baby.png
+    - assets/baloon.png
+    - assets/watercolor.png 
+    - assets/logo1.png
+    - assets/bg.png  
+    
