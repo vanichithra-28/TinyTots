@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1080451705085",
+    "project_id": "tinytots-5783a",
+    "storage_bucket": "tinytots-5783a.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1080451705085:android:e2b48978639e9df4ae3694",
+        "android_client_info": {
+          "package_name": "com.example.tinytots_admin"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA5aXLraklFL-Gw7CfxiJAZ_yB5DpzRqPw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

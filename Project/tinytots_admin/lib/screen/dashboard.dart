@@ -1,8 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:tinytots_admin/screen/Login.dart';
+import 'package:tinytots_admin/components/sidebar.dart';
+import 'package:tinytots_admin/components/appbar.dart';
 import 'package:tinytots_admin/screen/attendance.dart';
+import 'package:tinytots_admin/screen/home.dart';
+import 'package:tinytots_admin/screen/event.dart';
+import 'package:tinytots_admin/screen/manage_fee_structure.dart';
+import 'package:tinytots_admin/screen/parent&child.dart';
+import 'package:tinytots_admin/screen/task.dart';
+import 'package:tinytots_admin/screen/admission.dart';
+import 'package:tinytots_admin/screen/manage_staff.dart';
 
-class Dashboard extends StatefulWidget {
+
+
+class Dashboard extends StatefulWidget { 
   const Dashboard({super.key});
 
   @override
@@ -10,118 +20,63 @@ class Dashboard extends StatefulWidget {
 }
 
 class _DashboardState extends State<Dashboard> {
+  int _selectedIndex = 0;
+  final List  _pages = [
+    Home(),
+    Staff(),
+    Admission(),
+    Parent_child(),
+    Events(),
+    Schedule(),
+    Attendance_list(),
+    Fee_structure(),
+    
+    
+  ];
+  void onSidebarItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        actions: [
-          Padding(
-            padding: const EdgeInsets.only(right: 35.0),
-            child: Row(
+      backgroundColor: Color(0xffedf2fb),
+      body: 
+      Row(
+        children: [
+          
+          Expanded(
+          
+                child: Container(
+                  
+                
+                  color: Color(0xffcaf0f8),
+                  
+                   child: SideBar(
+                    
+                      onItemSelected: onSidebarItemTapped,
+                      
+                    )
+                ),
+              ),
+               Expanded(
+            flex: 7,
+            child: Column(
               children: [
-                Icon(Icons.account_circle),
-                Text('Admin'),
+              
+                Appbar(),
+              
+                Expanded(
+                  child:SingleChildScrollView(
+                  child: _pages[_selectedIndex],
+                ),)
               ],
             ),
-          )
-        ],
-        backgroundColor: Color(0xffb7efc5),
-        foregroundColor: Color(0xff10451d),
-        title: Text(
-          'DASHBOARD',
-          style: TextStyle(
-            fontWeight: FontWeight.bold,
           ),
-        ),
-      ),
-      body: Row(
-        children: [
-          SingleChildScrollView(
-            child: Container(
-              width: 300,
-              height: 700,
-              decoration: BoxDecoration(
-                color: Color(0xffd8e2dc),
-              ),
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0, top: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.home),
-                      title: Text('Home'),
-                      onTap: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.menu_book_rounded),
-                      title: Text('Attendance'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Attendance()),
-                        );
-                      },
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.person_2_rounded),
-                      title: Text('Staff'),
-                      onTap: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.video_label_sharp),
-                      title: Text('Media'),
-                      onTap: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.abc),
-                      title: Text('Learning'),
-                      onTap: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.payment),
-                      title: Text('Payments'),
-                      onTap: () {},
-                    ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 20.0),
-                    child: ListTile(
-                      leading: Icon(Icons.power_settings_new_rounded),
-                      title: Text('Logout'),
-                      onTap: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Login()),
-                        );
-                      },
-                    ),
-                  )
-                ],
-              ),
-            ),
-          ),
-          Expanded(
-            child: Container(
-              color: Color(0xffe8e8e4),
-            ),
-          )
         ],
       ),
+          
     );
   }
 }
