@@ -161,7 +161,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Name',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              style: TextStyle(color: Colors.white),
+                          
                             ),
                             SizedBox(
                               height: 10,
@@ -172,7 +172,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Email',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              style: TextStyle(color: Colors.white),
+                              
                             ),
                             SizedBox(
                               height: 10,
@@ -183,9 +183,20 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Contact',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              style: TextStyle(color: Colors.white),
+                              
                             ),
                             SizedBox(
+                              height: 10,
+                            ),
+                            TextFormField(
+                              controller: passController,
+                              decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  border: OutlineInputBorder(
+                                      borderRadius: BorderRadius.zero)),
+                             
+                            ),
+                             SizedBox(
                               height: 10,
                             ),
                             TextFormField(
@@ -194,7 +205,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Start Date',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              style: TextStyle(color: Colors.white),
+                             
                             ),
                             SizedBox(
                               height: 10,
