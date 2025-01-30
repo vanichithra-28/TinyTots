@@ -59,7 +59,7 @@ class _Fee_structureState extends State<Fee_structure>
         ),
         backgroundColor: Colors.green,
       ));
-      print("File type deleted");
+    
     } catch (e) {
       print("ERROR DELETING FEES DATA:$e");
     }
@@ -103,8 +103,10 @@ class _Fee_structureState extends State<Fee_structure>
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            
             Padding(
-              padding: const EdgeInsets.only(left: 1100),
+              padding: const EdgeInsets.only(left: 1100,top: 20),
+              
               child: ElevatedButton.icon(
                 onPressed: () {
                   setState(() {
@@ -196,61 +198,58 @@ class _Fee_structureState extends State<Fee_structure>
           height: 20,
         ),
         Text("FEE DETAILS",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6))),
         SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Container(
               padding: EdgeInsets.all(16), // Padding inside the container
               margin: EdgeInsets.all(16), // Margin outside the container
               decoration: BoxDecoration(
-                color: Color(0xfff8f7ff), // Background color of the container
+                color: Color(0xffffffff), // Background color of the container
                 borderRadius: BorderRadius.circular(12), // Rounded corners
                 border: Border.all(
-                  color: Color(0xffffffff), // Border color
+                  color: Color(0xFFeceef0), // Border color
                   width: 2, // Border width
                 ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Color(0xff616898).withOpacity(0.5), // Shadow color
-                    spreadRadius: 2, // How much the shadow spreads
-                    blurRadius: 5, // How blurry the shadow is
-                    offset: Offset(0, 3), // Offset of the shadow (x, y)
-                  ),
-                ],
+                
               ),
               child: DataTable(
                 columns: [
                   DataColumn(
                       label: Text("Sl.No",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                   DataColumn(
                       label: Text("Fees amount",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                   DataColumn(
                       label: Text("Fees details",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                   DataColumn(
                       label: Text("Fees name",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                   DataColumn(
                       label: Text("Delete",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                   DataColumn(
                       label: Text("Edit",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                 ],
                 rows: _feesList.asMap().entries.map((entry) {
                   return DataRow(cells: [
-                    DataCell(Text((entry.key + 1).toString())),
-                    DataCell(Text(entry.value['fee_amount'])),
-                    DataCell(Text(entry.value['fee_details'])),
-                    DataCell(Text(entry.value['fee_name'])),
+                    DataCell(Text((entry.key + 1).toString(),style:TextStyle(
+                              color: Color(0xffB4B4B6)) ,)),
+                    DataCell(Text(entry.value['fee_amount'],style:TextStyle(
+                              color: Color(0xffB4B4B6)) ,),),
+                    DataCell(Text(entry.value['fee_details'],style:TextStyle(
+                              color: Color(0xffB4B4B6)) ,)),
+                    DataCell(Text(entry.value['fee_name'],style:TextStyle(
+                              color: Color(0xffB4B4B6)) ,)),
                     DataCell(
                       IconButton(
                         onPressed: () {

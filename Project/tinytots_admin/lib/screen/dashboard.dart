@@ -21,7 +21,8 @@ class Dashboard extends StatefulWidget {
 
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
-  final List  _pages = [
+
+  final List _pages = [
     Home(),
     Staff(),
     Admission(),
@@ -30,53 +31,49 @@ class _DashboardState extends State<Dashboard> {
     Schedule(),
     Attendance_list(),
     Fee_structure(),
-    
-    
   ];
+
   void onSidebarItemTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xffedf2fb),
-      body: 
-      Row(
+      backgroundColor: Color(0xFFeceef0),
+      body: Row(
         children: [
-          
           Expanded(
-          
-                child: Container(
-                  
-                
-                  color: Color(0xffcaf0f8),
-                  
-                   child: SideBar(
-                    
-                      onItemSelected: onSidebarItemTapped,
-                      
-                    )
-                ),
+            child: Container(
+          //     decoration: BoxDecoration( gradient :LinearGradient(colors: [
+          //   const Color(0xFFF4A896), // Golden
+          //       Color(0xFF00C897),
+          // ], begin: Alignment.topCenter, end: Alignment.bottomCenter),),
+             
+              child: SideBar(
+                selectedIndex: _selectedIndex,  // Pass selected index
+                onItemSelected: onSidebarItemTapped,
               ),
-               Expanded(
-            flex: 7,
+            ),
+          ),
+
+          Expanded(
+            flex: 6,
             child: Column(
               children: [
-              
                 Appbar(),
-              
                 Expanded(
-                  child:SingleChildScrollView(
-                  child: _pages[_selectedIndex],
-                ),)
+                  child: SingleChildScrollView(
+                    child: _pages[_selectedIndex],
+                  ),
+                ),
               ],
             ),
           ),
         ],
       ),
-          
     );
   }
 }

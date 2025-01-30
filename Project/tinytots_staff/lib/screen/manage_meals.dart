@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tinytots_staff/main.dart';
 
 class ManageMeals extends StatefulWidget {
@@ -10,7 +11,7 @@ class ManageMeals extends StatefulWidget {
 
 class _ManageMealsState extends State<ManageMeals>
     with SingleTickerProviderStateMixin {
-  final _formKey = GlobalKey<FormState>();
+  
   bool _isFormVisible = false; // To manage form visibility
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final TextEditingController mealController = TextEditingController();

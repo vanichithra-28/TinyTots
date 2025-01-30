@@ -13,7 +13,7 @@ class _AppbarState extends State<Appbar> {
     return Container(
         height: 55,
         width: 2500,
-        decoration: BoxDecoration(color: const Color(0xffcaf0f8)),
+        decoration: BoxDecoration(color: const Color(0xFFeceef0)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [

@@ -1,9 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:tinytots_parent/intro.dart';
+import 'package:tinytots_parent/firebase_options.dart';
+import 'package:tinytots_parent/sceen/intro.dart';
 
 
 Future<void> main() async {
+   WidgetsFlutterBinding.ensureInitialized();
+  await DefaultFirebaseOptions.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   await Supabase.initialize(
     url: 'https://dusxeazevqhptwodxcvk.supabase.co',
     anonKey:
@@ -12,6 +17,7 @@ Future<void> main() async {
   runApp(const MainApp());
 }
 
+final supabase = Supabase.instance.client;
 
 class MainApp extends StatelessWidget {
   const MainApp({super.key});
@@ -19,7 +25,7 @@ class MainApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return const MaterialApp(
-      
+      debugShowCheckedModeBanner: false,
       home:Intro() 
       
     );

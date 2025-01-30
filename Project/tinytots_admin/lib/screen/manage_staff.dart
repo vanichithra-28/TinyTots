@@ -14,52 +14,89 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
+  final TextEditingController passController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController startdateController = TextEditingController();
-  
+
   final TextEditingController statusController = TextEditingController();
-  List<Map<String,dynamic>>_staffList = [];
-  void insert()async{
-    try{
-    String Name=nameController.text;  
-    String Email=emailController.text;
-    String Contact=contactController.text;
-    
-    String StartDate=startdateController.text;
-    await supabase.from('tbl_staff').insert({
-    'staff_name':Name,
-    'staff_email':Email,
-    'staff_contact':Contact,
-    
-    'start_date':StartDate,
-    });
-    display();
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+  List<Map<String, dynamic>> _staffList = [];
+
+  Future<void> register() async {
+    try {
+      final auth = await supabase.auth.signUp(password: passController.text, email: emailController.text);
+      final uid = auth.user!.id;
+      if(uid.isNotEmpty || uid!=""){
+        insert(uid);
+      }
+    } catch (e) {
+      
+    }
+  }
+
+  void insert(final id) async {
+    try {
+      String Name = nameController.text;
+      String Email = emailController.text;
+      String Contact = contactController.text;
+
+      String StartDate = startdateController.text;
+      await supabase.from('tbl_staff').insert({
+        'id': id,
+        'staff_name': Name,
+        'staff_email': Email,
+        'staff_contact': Contact,
+        'start_date': StartDate,
+
+      });
+      display();
+      nameController.clear();
+      emailController.clear();
+      contactController.clear();
+      startdateController.clear();
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
       ));
-    }
-    catch(e)
-    {
+    } catch (e) {
       print('ERROR');
     }
   }
-  void display()async{
-    try{
-     final reponse = await supabase.from('tbl_staff').select();
-       setState(() {
+
+  //DISPLAY
+  void display() async {
+    try {
+      final reponse = await supabase.from('tbl_staff').select();
+      setState(() {
         _staffList = reponse;
       });
-    }
-    catch(e){
+    } catch (e) {
       print('ERROR');
     }
   }
+
+  //delete
+  Future<void> delete(int delId) async {
+    try {
+      await supabase.from('tbl_staff').delete().eq('id', delId);
+      display();
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          " Deleted",
+          style: TextStyle(color: Colors.white),
+        ),
+        backgroundColor: Colors.green,
+      ));
+    } catch (e) {
+      print('ERROR IN DELETING$e');
+    }
+  }
+
   @override
-   void initState() {
+  void initState() {
     // TODO: implement initState
     super.initState();
     display();
   }
+
   Widget build(BuildContext context) {
     return Column(
       children: [
@@ -78,7 +115,10 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     _isFormVisible = !_isFormVisible; // Toggle form visibility
                   });
                 },
-                label: Text(_isFormVisible ? "Cancel" : "Add "),
+                label: Text(
+                  _isFormVisible ? "Cancel" : "Add Staff",
+                  style: TextStyle(color: Color(0xff007BFF)),
+                ),
                 icon: Icon(
                   _isFormVisible ? Icons.cancel : Icons.add,
                   color: Colors.blueAccent,
@@ -98,15 +138,15 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                   padding: const EdgeInsets.all(28.0),
                   child: Container(
                     decoration: BoxDecoration(
+                      color: Color(0xffffffff),
                       borderRadius: BorderRadius.all(
-                        Radius.circular(15),
+                        Radius.zero,
                       ),
-                      color: Color.fromARGB(15, 240, 239, 239),
                     ),
                     child: Form(
                         child: Padding(
                       padding: const EdgeInsets.only(
-                        left: 200.0,
+                        left: 300.0,
                         right: 300,
                       ),
                       child: Center(
@@ -116,45 +156,54 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                               height: 10,
                             ),
                             TextFormField(
+                              controller: nameController,
                               decoration: InputDecoration(
                                   labelText: 'Name',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
+                              style: TextStyle(color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             TextFormField(
+                              controller: emailController,
                               decoration: InputDecoration(
                                   labelText: 'Email',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
+                              style: TextStyle(color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
                             TextFormField(
+                              controller: contactController,
                               decoration: InputDecoration(
                                   labelText: 'Contact',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
+                              style: TextStyle(color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            
                             TextFormField(
+                              controller: startdateController,
                               decoration: InputDecoration(
                                   labelText: 'Start Date',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
+                              style: TextStyle(color: Colors.white),
                             ),
                             SizedBox(
                               height: 10,
                             ),
-                            ElevatedButton(onPressed: () {
-                              insert();
-                            }, child: Text("Insert"))
+                            ElevatedButton(
+                                onPressed: () {
+                                  register();
+                                },
+                                child: Text("Insert"))
                           ],
                         ),
                       ),
@@ -168,65 +217,93 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
         ),
         Text(
           'STAFF DETAILS',
-          style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          style: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: Color(0xffB4B4B6)),
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
           child: Container(
             padding: EdgeInsets.all(16), // Padding inside the container
-                margin: EdgeInsets.all(16), // Margin outside the container
-                decoration: BoxDecoration(
-                  color: Color(0xfff8f7ff), // Background color of the container
-                  borderRadius: BorderRadius.circular(12), // Rounded corners
-                  border: Border.all(
-                    color: Color(0xffffffff), // Border color
-                    width: 2, // Border width
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Color(0xff616898).withOpacity(0.5), // Shadow color
-                      spreadRadius: 2, // How much the shadow spreads
-                      blurRadius: 5, // How blurry the shadow is
-                      offset: Offset(0, 3), // Offset of the shadow (x, y)
+            margin: EdgeInsets.all(16), // Margin outside the container
+            decoration: BoxDecoration(
+              color: Color(0xffffffff), // Background color of the container
+              borderRadius: BorderRadius.zero, // Rounded corners
+              border: Border.all(
+                color: Color(0xFFeceef0), // Border color
+                width: 2, // Border width
+              ),
+            ),
+            child: DataTable(
+              columns: [
+                DataColumn(
+                    label: Text('Sl.No',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
+                DataColumn(
+                    label: Text('Name',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
+                DataColumn(
+                    label: Text('Email',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
+                DataColumn(
+                    label: Text('Contact',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
+                DataColumn(
+                    label: Text('Start Date',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
+                DataColumn(
+                    label: Text('',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold))),
+              ],
+              rows: _staffList.asMap().entries.map((entry) {
+                return DataRow(cells: [
+                  DataCell(Text(
+                    (entry.key + 1).toString(),
+                    style: TextStyle(color: Color(0xffB4B4B6)),
+                  )),
+                  DataCell(
+                    Text(
+                      entry.value['staff_name'],
+                      style: TextStyle(color: Color(0xffB4B4B6)),
                     ),
-                  ],
-                ),
-            child: DataTable(columns: [
-              DataColumn(
-                  label: Text('Sl.No',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Name',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Email',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Contact',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-              DataColumn(
-                  label: Text('Start Date',
-                      style:
-                          TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-              // DataColumn(
-              //     label: Text('Status',
-              //         style:
-              //             TextStyle(fontSize: 16, fontWeight: FontWeight.bold))),
-            ],
-            rows: _staffList.asMap().entries.map((entry) {
-                    return DataRow(cells: [
-                      DataCell(Text((entry.key + 1).toString())),
-                      DataCell(Text(entry.value['staff_name'])),
-                      DataCell(Text(entry.value['staff_email'])),
-                      DataCell(Text(entry.value['staff_contact'])),
-                      DataCell(Text(entry.value['start_date'])),
-                     
-                    ]);
-                  }).toList(), 
+                  ),
+                  DataCell(Text(
+                    entry.value['staff_email'],
+                    style: TextStyle(color: Color(0xffB4B4B6)),
+                  )),
+                  DataCell(Text(
+                    entry.value['staff_contact'],
+                    style: TextStyle(color: Color(0xffB4B4B6)),
+                  )),
+                  DataCell(Text(
+                    entry.value['start_date'],
+                    style: TextStyle(color: Color(0xffB4B4B6)),
+                  )),
+                  DataCell(IconButton(
+                    icon: Icon(Icons.delete),
+                    onPressed: () {
+                      delete(entry.value['id']);
+                    },
+                  )),
+                ]);
+              }).toList(),
             ),
           ),
         )
