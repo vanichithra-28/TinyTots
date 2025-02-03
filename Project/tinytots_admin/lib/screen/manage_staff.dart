@@ -78,7 +78,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
         content: Text("Inserted"),
       ));
     } catch (e) {
-      print('ERROR');
+      print('ERROR:$e');
     }
   }
 

@@ -12,6 +12,7 @@ class _Fee_structureState extends State<Fee_structure>
     with SingleTickerProviderStateMixin {
   bool _isFormVisible = false;
   @override
+  // ignore: override_on_non_overriding_member
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final TextEditingController amountController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();

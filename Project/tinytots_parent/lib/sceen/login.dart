@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tinytots_parent/main.dart';
 import 'package:tinytots_parent/sceen/dashboard.dart';
+import 'package:cherry_toast/resources/arrays.dart';
+import 'package:cherry_toast/cherry_toast.dart';
 
 class Login extends StatefulWidget {
   const Login({super.key});
@@ -9,7 +12,31 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
-  @override
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+ 
+
+  Future<void> signin() async {
+    try {
+      await supabase.auth.signInWithPassword(
+  email: emailController.text,
+  password:passwordController.text,
+);
+   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())); 
+  
+    } catch (e) {
+       
+      print('ERROR: $e');
+      CherryToast.error(
+              description: Text("No user found for that email.",
+                  style: TextStyle(color: Colors.black)),
+              animationType: AnimationType.fromRight,
+              animationDuration: Duration(milliseconds: 1000),
+              autoDismiss: true)
+          .show(context);
+      print('No user found for that email.');
+    }
+  }
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFADD8E6),
@@ -36,8 +63,9 @@ class _LoginState extends State<Login> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      controller: emailController,
                       decoration: InputDecoration(
-                        labelText: 'Username',
+                        labelText: 'Email',
                         border: OutlineInputBorder(
                             borderRadius: BorderRadius.circular(10)),
                         prefixIcon: Icon(Icons.person),
@@ -48,6 +76,7 @@ class _LoginState extends State<Login> {
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: TextFormField(
+                      controller: passwordController,
                       decoration: InputDecoration(
                           labelText: 'Password',
                           border: OutlineInputBorder(
@@ -58,10 +87,7 @@ class _LoginState extends State<Login> {
                   SizedBox(height: 50),
                   ElevatedButton(
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => Dashboard()),
-                        );
+                       signin();
                       },
                       child: Text(
                         'LOGIN',

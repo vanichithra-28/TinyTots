@@ -17,7 +17,7 @@ class _IntroState extends State<Intro> {
       
 body: Form(
   child: Center(
-    child: Column(mainAxisAlignment:MainAxisAlignment.end,
+    child: Column(mainAxisAlignment:MainAxisAlignment.center,
       children: [
         // Align(
         //               alignment: Alignment.topCenter,

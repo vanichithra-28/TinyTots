@@ -146,6 +146,7 @@ class _DashboardState extends State<Dashboard> {
           BottomNavigationBarItem(
             icon: Icon(Icons.settings,color: Color(0xff023047),),
             label: '',
+          
           ),
         ],
       ),
