@@ -1,3 +1,7 @@
+import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_admin/main.dart';
 
@@ -20,16 +24,28 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
 
   final TextEditingController statusController = TextEditingController();
   List<Map<String, dynamic>> _staffList = [];
+  PlatformFile? pickedImage;
+  Future<void> handleImagePick() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      allowMultiple: false, // Only single file upload
+    );
+    if (result != null) {
+      setState(() {
+        pickedImage = result.files.first;
+      });
+    }
+  }
 
   Future<void> register() async {
     try {
-      final auth = await supabase.auth.signUp(password: passController.text, email: emailController.text);
+      final auth = await supabase.auth
+          .signUp(password: passController.text, email: emailController.text);
       final uid = auth.user!.id;
-      if(uid.isNotEmpty || uid!=""){
+      if (uid.isNotEmpty || uid != "") {
         insert(uid);
       }
     } catch (e) {
-      
+      print('ERROR REGISTERING STAFF:$e');
     }
   }
 
@@ -38,26 +54,49 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
       String Name = nameController.text;
       String Email = emailController.text;
       String Contact = contactController.text;
-
+      String pwd = passController.text;
       String StartDate = startdateController.text;
+      String? url = await photoUpload(id);
+      if(url!.isNotEmpty){
       await supabase.from('tbl_staff').insert({
         'id': id,
         'staff_name': Name,
         'staff_email': Email,
         'staff_contact': Contact,
+        'staff_pwd': pwd,
         'start_date': StartDate,
-
+        'staff_photo': url,
       });
+      }
       display();
       nameController.clear();
       emailController.clear();
       contactController.clear();
       startdateController.clear();
+      passController.clear();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
       ));
     } catch (e) {
       print('ERROR');
+    }
+  }
+
+  Future<String?> photoUpload(String uid) async {
+    try {
+      final bucketName = 'admin'; // Replace with your bucket name
+      final filePath = "$uid-${pickedImage!.name}";
+      await supabase.storage.from(bucketName).uploadBinary(
+            filePath,
+            pickedImage!.bytes!, // Use file.bytes for Flutter Web
+          );
+      final publicUrl =
+          supabase.storage.from(bucketName).getPublicUrl(filePath);
+      // await updateImage(uid, publicUrl);
+      return publicUrl;
+    } catch (e) {
+      print("Error photo upload: $e");
+      return null;
     }
   }
 
@@ -107,7 +146,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
               padding: const EdgeInsets.only(left: 1100, top: 10),
               child: ElevatedButton.icon(
                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff03045e),
+                    backgroundColor: Color(0xff3e53a0),
                     shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(4))),
                 onPressed: () {
@@ -153,15 +192,47 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                         child: Column(
                           children: [
                             SizedBox(
+                              height: 120,
+                              width: 120,
+                              child: pickedImage == null
+                                  ? GestureDetector(
+                                      onTap: handleImagePick,
+                                      child: Icon(
+                                        Icons.add_a_photo,
+                                        color: Color(0xFF0277BD),
+                                        size: 50,
+                                      ),
+                                    )
+                                  : GestureDetector(
+                                      onTap: handleImagePick,
+                                      child: ClipRRect(
+                                        borderRadius:
+                                            BorderRadius.circular(100),
+                                        child: pickedImage!.bytes != null
+                                            ? Image.memory(
+                                                Uint8List.fromList(pickedImage!
+                                                    .bytes!), // For web
+                                                fit: BoxFit.cover,
+                                              )
+                                            : Image.file(
+                                                File(pickedImage!
+                                                    .path!), // For mobile/desktop
+                                                fit: BoxFit.cover,
+                                              ),
+                                      ),
+                                    ),
+                            ),
+                            SizedBox(
                               height: 10,
                             ),
+                            
+                            
                             TextFormField(
                               controller: nameController,
                               decoration: InputDecoration(
                                   labelText: 'Name',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                          
                             ),
                             SizedBox(
                               height: 10,
@@ -172,7 +243,6 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Email',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              
                             ),
                             SizedBox(
                               height: 10,
@@ -183,7 +253,6 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Contact',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                              
                             ),
                             SizedBox(
                               height: 10,
@@ -194,9 +263,8 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Password',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                             
                             ),
-                             SizedBox(
+                            SizedBox(
                               height: 10,
                             ),
                             TextFormField(
@@ -205,7 +273,6 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                                   labelText: 'Start Date',
                                   border: OutlineInputBorder(
                                       borderRadius: BorderRadius.zero)),
-                             
                             ),
                             SizedBox(
                               height: 10,
@@ -254,6 +321,12 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
                             color: Color(0xffB4B4B6)))),
+                            DataColumn(
+                    label: Text('Photo',
+                        style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
                 DataColumn(
                     label: Text('Name',
                         style: TextStyle(
@@ -290,6 +363,11 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     style: TextStyle(color: Color(0xffB4B4B6)),
                   )),
                   DataCell(
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(entry.value['staff_photo']),
+                    )
+                  ),
+                  DataCell(
                     Text(
                       entry.value['staff_name'],
                       style: TextStyle(color: Color(0xffB4B4B6)),
@@ -320,6 +398,5 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
         )
       ],
     );
-    ;
   }
 }

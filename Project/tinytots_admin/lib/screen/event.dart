@@ -30,21 +30,19 @@ class _EventsState extends State<Events> {
   }
 
   
-  Future<void> storeData(String uid) async {
+  Future<void> storeData() async {
     try {
       String name = _nameController.text;
       String date = _dateController.text;
       String details = _detailsController.text;
      
-      String? url = await photoUpload(uid);
+      String? url = await photoUpload(name);
 
       if (url!.isNotEmpty) {
         await supabase.from('tbl_event').insert({
           'event_name': name,
           'event_date': date,
           'event_details': details,
-          
-          
           'event_photo': url,
         });
         ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -61,10 +59,10 @@ class _EventsState extends State<Events> {
       print("Error inserting teacher details:$e");
     }
   }
-    Future<String?> photoUpload(String uid) async {
+    Future<String?> photoUpload(String name) async {
     try {
       final bucketName = 'admin'; // Replace with your bucket name
-      final filePath = "$uid-${pickedImage!.name}";
+      final filePath = "$name-${pickedImage!.name}";
       await supabase.storage.from(bucketName).uploadBinary(
             filePath,
             pickedImage!.bytes!, // Use file.bytes for Flutter Web
@@ -153,7 +151,7 @@ class _EventsState extends State<Events> {
                       )),
                     ),SizedBox(height: 10,),
                     ElevatedButton(onPressed: () {
-                      storeData('id');
+                      storeData();
                     }, child: Text('submit'))
                   ],
                   
