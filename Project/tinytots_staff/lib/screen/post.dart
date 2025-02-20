@@ -1,8 +1,7 @@
 import 'dart:io';
-import 'dart:typed_data';
-import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tinytots_staff/main.dart';
 
 class Post extends StatefulWidget {
@@ -14,124 +13,151 @@ class Post extends StatefulWidget {
 
 class _PostState extends State<Post> {
   final TextEditingController titleController = TextEditingController();
-  PlatformFile? pickedImage;
-  Future<void> handleImagePick() async {
-    FilePickerResult? result = await FilePicker.platform.pickFiles(
-      allowMultiple: false, // Only single file upload
-    );
-    if (result != null) {
+  File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
       setState(() {
-        pickedImage = result.files.first;
+        _image = File(pickedFile.path);
       });
     }
   }
 
-  Future<String?> photoUpload(String staffId) async {
+  Future<String?> uploadImage(String staffId) async {
     try {
-      final bucketName = 'post';
-      // Include staffId in the file path to ensure uniqueness
-      final filePath = "$staffId-${pickedImage!.name}";
-      await supabase.storage.from(bucketName).uploadBinary(
-            filePath,
-            pickedImage!.bytes!,
-          );
-      final publicUrl =
-          supabase.storage.from(bucketName).getPublicUrl(filePath);
-      return publicUrl;
+      final fileName =
+          '$staffId-${DateTime.now().millisecondsSinceEpoch}.jpg'; // Unique file name
+      await supabase.storage.from('post').upload(fileName, _image!);
+
+      // Get public URL of the uploaded image
+      final imageUrl = supabase.storage.from('post').getPublicUrl(fileName);
+      return imageUrl;
     } catch (e) {
-      print("Error photo upload: $e");
+      print('Image upload failed: $e');
+      return null;
     }
-    return null;
   }
 
   Future<void> storeData() async {
     try {
-      String staffId = supabase.auth.currentUser!.id;
-      String title = titleController.text;
-      String? url = await photoUpload(staffId);
+      final staffId = supabase.auth.currentUser?.id;
+      if (staffId == null) {
+        print("User is not authenticated");
+        return;
+      }
 
-      if (url != null && url.isNotEmpty) {
-        await supabase.from('tbl_post').insert({
-          'post_file': url,
-          'post_title': title,
-          'staff_id': staffId, // Add staffId to the database
-        });
-        ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+      final title = titleController.text;
+      if (title.isEmpty) {
+        print("Title is empty");
+        return;
+      }
+
+      if (_image == null) {
+        print("No image selected");
+        return;
+      }
+
+      // Upload image and get URL
+      final imageUrl = await uploadImage(staffId);
+      if (imageUrl == null) {
+        print("Image upload failed");
+        return;
+      }
+
+      // Insert data into the database
+      await supabase.from('tbl_post').insert({
+        'staff_id': staffId,
+        'post_file': imageUrl,
+        'post_title': title,
+      });
+
+      print("Data inserted successfully");
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
           content: Text(
-            "Post details added",
+            "Post added successfully",
             style: TextStyle(color: Colors.white),
           ),
           backgroundColor: Colors.green,
-        ));
-        titleController.clear();
-      } else {
-        print("post not given");
-      }
+        ),
+      );
+
+      titleController.clear();
+      setState(() {
+        _image = null;
+      });
     } catch (e) {
-      print("Error inserting post details:$e");
+      print("Error inserting post data: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text(
+            "Failed to add post",
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(),
-      body: Center(
-        child: Column(
-          children: [
-            SizedBox(
-              height: 120,
-              width: 120,
-              child: pickedImage == null
-                  ? GestureDetector(
-                      onTap: handleImagePick,
-                      child: HugeIcon(
-                        icon: HugeIcons.strokeRoundedImageAdd02,
-                        color: Colors.black,
-                        size: 50.0,
-                      ))
-                  : GestureDetector(
-                      onTap: handleImagePick,
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.zero,
-                        child: pickedImage!.bytes != null
-                            ? Image.memory(
-                                Uint8List.fromList(
-                                    pickedImage!.bytes!), // For web
-                                fit: BoxFit.cover,
-                              )
-                            : Image.file(
-                                File(pickedImage!.path!), // For mobile/desktop
-                                fit: BoxFit.cover,
-                              ),
-                      ),
+      appBar: AppBar(
+        title: const Text("Create Post"),
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 500,
+                    width: 500,
+                    decoration: BoxDecoration(
+                      image: _image != null
+                          ? DecorationImage(
+                              image: FileImage(_image!),
+                              fit: BoxFit.cover,
+                            )
+                          : null,
                     ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: TextFormField(
+                    child: _image == null
+                        ? const HugeIcon(
+                            icon: HugeIcons.strokeRoundedPlayListAdd,
+                            color: Colors.black,
+                            size: 70.0,
+                          )
+                        : null,
+                  )),
+              const SizedBox(height: 20),
+              TextFormField(
                 controller: titleController,
                 decoration: InputDecoration(
-                    labelText: 'Title',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(3),
-                    )),
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
               ),
-            ),
-            SizedBox(
-              height: 10,
-            ),
-            ElevatedButton(
-              style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xffffffff),
-                    ),
-              onPressed: () {
-                storeData();
-              },
-              
-              child: Text('Upload'),
-            )
-          ],
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.blue,
+                ),
+                onPressed: storeData,
+                child: const Text(
+                  'Upload',
+                  style: TextStyle(color: Colors.white),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
