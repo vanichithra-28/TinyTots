@@ -24,11 +24,5 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/child.jpg
-    - assets/tinytots.jpg
-    - assets/p1.png
-    - assets/p2.png
-    - assets/p3.jpg
-    - assets/pic4.webp
-    - assets/flower.png
+    - assets/
 

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tinytots_admin/main.dart';
 import 'package:tinytots_admin/screen/dashboard.dart';
-
+import 'package:cherry_toast/resources/arrays.dart';
+import 'package:cherry_toast/cherry_toast.dart';
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -9,6 +11,31 @@ class Login extends StatefulWidget {
 }
 
 class _LoginState extends State<Login> {
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  
+   Future<void> signin() async {
+    try {
+      await supabase.auth.signInWithPassword(
+  email: emailController.text,
+  password:passwordController.text,
+);
+   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())); 
+  
+    } catch (e) {
+       
+      print('ERROR: $e');
+      CherryToast.error(
+              description: Text("No user found for that email.",
+                  style: TextStyle(color: Colors.black)),
+              animationType: AnimationType.fromRight,
+              animationDuration: Duration(milliseconds: 1000),
+              autoDismiss: true)
+          .show(context);
+      print('No user found for that email.');
+    }
+  }
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -89,8 +116,9 @@ class _LoginState extends State<Login> {
                       Padding(
                         padding: EdgeInsets.only(left: 60, right: 90),
                         child: TextFormField(
+                          controller: emailController,
                           decoration: InputDecoration(
-                            labelText: 'Username',
+                            labelText: 'Email',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20)),
                             prefixIcon: Icon(Icons.person),
@@ -101,6 +129,7 @@ class _LoginState extends State<Login> {
                       Padding(
                         padding: EdgeInsets.only(left: 60, right: 90),
                         child: TextFormField(
+                          controller: passwordController,
                           decoration: InputDecoration(
                               labelText: 'Password',
                               border: OutlineInputBorder(

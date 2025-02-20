@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_admin/main.dart';
+import 'package:tinytots_admin/screen/task.dart';
 
 class Staff extends StatefulWidget {
   const Staff({super.key});
@@ -55,7 +56,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
       String Email = emailController.text;
       String Contact = contactController.text;
       String pwd = passController.text;
-      String StartDate = startdateController.text;
+      
       String? url = await photoUpload(id);
       if(url!.isNotEmpty){
       await supabase.from('tbl_staff').insert({
@@ -64,7 +65,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
         'staff_email': Email,
         'staff_contact': Contact,
         'staff_pwd': pwd,
-        'start_date': StartDate,
+        
         'staff_photo': url,
       });
       }
@@ -108,7 +109,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
         _staffList = reponse;
       });
     } catch (e) {
-      print('ERROR');
+      print('ERROR: $e');
     }
   }
 
@@ -156,11 +157,11 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                 },
                 label: Text(
                   _isFormVisible ? "Cancel" : "Add Staff",
-                  style: TextStyle(color: Color(0xff007BFF)),
+                  style: TextStyle(color: Color(0xFFeceef0)),
                 ),
                 icon: Icon(
                   _isFormVisible ? Icons.cancel : Icons.add,
-                  color: Colors.blueAccent,
+                  color: Color(0xFFeceef0),
                 ),
               ),
             ),
@@ -191,6 +192,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                       child: Center(
                         child: Column(
                           children: [
+                           
                             SizedBox(
                               height: 120,
                               width: 120,
@@ -267,13 +269,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                             SizedBox(
                               height: 10,
                             ),
-                            TextFormField(
-                              controller: startdateController,
-                              decoration: InputDecoration(
-                                  labelText: 'Start Date',
-                                  border: OutlineInputBorder(
-                                      borderRadius: BorderRadius.zero)),
-                            ),
+                           
                             SizedBox(
                               height: 10,
                             ),
@@ -355,6 +351,11 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     label: Text('',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold))),
+                             DataColumn(
+                    label: Text('Action',
+                        style: TextStyle(
+                            fontSize: 16, fontWeight: FontWeight.bold,
+                            color: Color(0xffB4B4B6)))),
               ],
               rows: _staffList.asMap().entries.map((entry) {
                 return DataRow(cells: [
@@ -382,7 +383,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     style: TextStyle(color: Color(0xffB4B4B6)),
                   )),
                   DataCell(Text(
-                    entry.value['start_date'],
+                    entry.value['created_at'],
                     style: TextStyle(color: Color(0xffB4B4B6)),
                   )),
                   DataCell(IconButton(
@@ -391,6 +392,15 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                       delete(entry.value['id']);
                     },
                   )),
+                  DataCell(ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                      context,
+                         MaterialPageRoute(
+                        builder: (context) =>Task(staffId: entry.value['id'],)));
+                    },
+                    child: Text('Assign'),
+                  ))
                 ]);
               }).toList(),
             ),

@@ -17,7 +17,7 @@ class _Attendance_listState extends State<Attendance_list> {
           child: Padding(
             padding: const EdgeInsets.all(8.0),
             child: Container(
-              height: 500,
+              height: 600,
              
               color: Color(0xffffffff),
                   child: Text('Day wise Attendance List',style:TextStyle(
@@ -30,7 +30,7 @@ class _Attendance_listState extends State<Attendance_list> {
            child: Padding(
              padding: const EdgeInsets.all(8.0),
              child: Container(
-              height: 500,
+              height: 600,
              
               color: Color(0xffffffff),
                    child: Text('Month wise Attendance List',style:TextStyle(

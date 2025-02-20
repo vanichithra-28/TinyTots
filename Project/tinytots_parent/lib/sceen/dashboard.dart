@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:tinytots_parent/sceen/children.dart';
-import 'package:tinytots_parent/sceen/events.dart';
-import 'package:tinytots_parent/sceen/payment.dart';
-import 'package:tinytots_parent/sceen/posts.dart';
+
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -60,7 +57,7 @@ class _DashboardState extends State<Dashboard> {
                           width: 70,
                           decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFFADD8E6),
+                        color: const Color(0xFfd4a373),
                                       ),),
                       ),
                     ),
@@ -72,7 +69,7 @@ class _DashboardState extends State<Dashboard> {
                           width: 70,
                           decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFFADD8E6),
+                        color: const Color(0xFF9d8189),
                                       ),),
                       ),
                     ),
@@ -89,8 +86,9 @@ class _DashboardState extends State<Dashboard> {
                           width: 70,
                           decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFFADD8E6),
-                                      ),),
+                        color: const Color(0xffadc178),
+                                      ),
+                          ),
                       ),
                     ),
                     Expanded(
@@ -101,7 +99,7 @@ class _DashboardState extends State<Dashboard> {
                           width: 70,
                           decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFFADD8E6),
+                        color: const Color(0xffff928b),
                                       ),),
                       ),
                     ),
@@ -144,8 +142,9 @@ class _DashboardState extends State<Dashboard> {
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.settings,color: Color(0xff023047),),
+            icon: Icon(Icons.logout,color: Color(0xff023047),),
             label: '',
+            
           
           ),
         ],

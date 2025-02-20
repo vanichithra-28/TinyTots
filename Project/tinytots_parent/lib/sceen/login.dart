@@ -39,16 +39,18 @@ class _LoginState extends State<Login> {
   }
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFADD8E6),
-      appBar: AppBar(),
+
+      backgroundColor: Color(0xFFeceef0),
+      
       body: Form(
+        
         child: Padding(
-          padding: EdgeInsets.all(10.0),
+          padding: EdgeInsets.only(top: 110, left: 20, right: 20),
+        
           child: Container(
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(20),
-                  bottomRight: Radius.circular(20)),
+              borderRadius: BorderRadius.all(Radius.circular(20)
+                 ),
               color: Color(0xFFffffff),
             ),
             height: 500,

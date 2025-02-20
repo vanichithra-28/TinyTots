@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:tinytots_staff/main.dart';
+
+import 'package:tinytots_admin/main.dart';
 
 class ManageMeals extends StatefulWidget {
   const ManageMeals({super.key});

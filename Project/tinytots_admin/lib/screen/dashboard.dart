@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:tinytots_admin/components/sidebar.dart';
 import 'package:tinytots_admin/components/appbar.dart';
 import 'package:tinytots_admin/screen/attendance.dart';
+import 'package:tinytots_admin/screen/classroom.dart';
 import 'package:tinytots_admin/screen/home.dart';
 import 'package:tinytots_admin/screen/event.dart';
 import 'package:tinytots_admin/screen/manage_fee_structure.dart';
+import 'package:tinytots_admin/screen/manage_meals.dart';
 import 'package:tinytots_admin/screen/parent&child.dart';
 import 'package:tinytots_admin/screen/task.dart';
 import 'package:tinytots_admin/screen/admission.dart';
@@ -27,10 +29,11 @@ class _DashboardState extends State<Dashboard> {
     Staff(),
     Admission(),
     Parent_child(),
+    Classroom(),
     Events(),
-    Schedule(),
     Attendance_list(),
     Fee_structure(),
+    ManageMeals(),
   ];
 
   void onSidebarItemTapped(int index) {

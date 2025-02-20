@@ -13,7 +13,7 @@ class _AdmissionState extends State<Admission> {
   List<Map<String,dynamic>>_admissionList=[];
   void display()async{
     try{
-     final reponse = await supabase.from('tbl_staff').select();
+     final reponse = await supabase.from('tbl_child').select();
        setState(() {
         _admissionList = reponse;
       });
@@ -44,7 +44,7 @@ class _AdmissionState extends State<Admission> {
                               DataColumn(label: Text("Name",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
-                               DataColumn(label: Text("Applicstion Date",
+                               DataColumn(label: Text("Application Date",
                           style: TextStyle(
                               fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
                               DataColumn(label: Text("Admission Status",
@@ -56,9 +56,9 @@ class _AdmissionState extends State<Admission> {
       ], rows:  _admissionList.asMap().entries.map((entry){
         return DataRow(cells: [
           DataCell(Text((entry.key+1).toString())),
-          DataCell(Text(entry.value['child_name']),),
-            DataCell(Text(entry.value['Application_date'])),
-           DataCell(Text(entry.value['admission_status'])),
+          DataCell(Text(entry.value['name']),),
+            DataCell(Text(entry.value['created_at'])),
+           DataCell(Text(entry.value['status'])),
             DataCell(Text("View")),
         ]);
       }).toList(),

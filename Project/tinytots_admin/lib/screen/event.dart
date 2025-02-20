@@ -1,3 +1,5 @@
+// ignore_for_file: sort_child_properties_last
+
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -86,7 +88,7 @@ class _EventsState extends State<Events> {
           ),
           Expanded(
             child: Container(
-              height: 500,
+              height: 600,
               child: Padding(
                 padding: const EdgeInsets.all(28.0),
                 child: Column(
@@ -178,7 +180,7 @@ class _EventsState extends State<Events> {
           ),
           Expanded(
             child: Container(
-              height: 500,
+              height: 600,
               child: Text(
                 'event ',
                 style: TextStyle(color: Color.fromARGB(255, 219, 214, 214)),

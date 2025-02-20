@@ -7,12 +7,14 @@ environment:
   sdk: ^3.6.0
 
 dependencies:
+  cherry_toast: ^1.12.0
   file_picker: ^8.3.1
   firebase_core: ^3.10.1
   flutter:
     sdk: flutter
+  flutter_svg: ^2.0.17
   supabase_flutter: ^2.8.2
-
+  
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -21,10 +23,4 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/baby.png
-    - assets/baloon.png
-    - assets/watercolor.png 
-    - assets/logo1.png
-    - assets/bg.png  
-    - assets/family.png
-    - assets/logo3.png
+    - assets/

@@ -15,8 +15,29 @@ class _AdmissionState extends State<Admission> {
      body: Column(
       children: [
         TextFormField(
-          
+          decoration: InputDecoration(
+            labelText: 'Name',
+            
+          ),   
         ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'Age',
+            
+          ),   
+        ),
+        TextFormField(
+          decoration: InputDecoration(
+            labelText: 'hdhd',
+          ),),
+          TextFormField(
+          decoration: InputDecoration(
+            labelText: 'hdhd',
+          ),),
+          TextFormField(
+          decoration: InputDecoration(
+            labelText: 'hdhd',
+          ),),
       ],
      ), 
     );
