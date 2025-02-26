@@ -105,61 +105,67 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text("Create Post"),
-      ),
-      body: Padding(
+    return  Padding(
         padding: const EdgeInsets.all(16.0),
         child: SingleChildScrollView(
-          child: Column(
-            children: [
-              GestureDetector(
-                  onTap: _pickImage,
-                  child: Container(
-                    height: 500,
-                    width: 500,
-                    decoration: BoxDecoration(
-                      image: _image != null
-                          ? DecorationImage(
-                              image: FileImage(_image!),
-                              fit: BoxFit.cover,
+          child: Container(
+            decoration:BoxDecoration( 
+            color: Color(0xffffffff),),
+            child: Column(
+              
+              children: [
+                
+                GestureDetector(
+                    onTap: _pickImage,
+                    child: Container(
+                      height: 450,
+                      width: 500,
+                      decoration: BoxDecoration(
+                        image: _image != null
+                            ? DecorationImage(
+                                image: FileImage(_image!),
+                                fit: BoxFit.cover,
+                              )
+                            : null,
+                            color: Color(0xffffffff)
+                      ),
+                      child: _image == null
+                          ? const HugeIcon(
+                              icon: HugeIcons.strokeRoundedPlayListAdd,
+                              color: Colors.black,
+                              size: 70.0,
                             )
                           : null,
+                    )
+                    
                     ),
-                    child: _image == null
-                        ? const HugeIcon(
-                            icon: HugeIcons.strokeRoundedPlayListAdd,
-                            color: Colors.black,
-                            size: 70.0,
-                          )
-                        : null,
-                  )),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: titleController,
-                decoration: InputDecoration(
-                  labelText: 'Title',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
+                const SizedBox(height: 20),
+                TextFormField(
+                  controller: titleController,
+                  decoration: InputDecoration(
+                    labelText: 'Title',
+                    border: OutlineInputBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                 ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.blue,
+                const SizedBox(height: 20),
+                ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blue,
+                  ),
+                  onPressed: storeData,
+                  child: const Text(
+                    'Upload',
+                    style: TextStyle(color: Colors.white),
+                  ),
                 ),
-                onPressed: storeData,
-                child: const Text(
-                  'Upload',
-                  style: TextStyle(color: Colors.white),
-                ),
-              ),
-            ],
+                SizedBox(height: 10,)
+              ],
+            ),
           ),
         ),
-      ),
-    );
+      );
+    
   }
 }

@@ -15,7 +15,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
         backgroundColor: Color(0xffffffff),
         title: Text('Attendance'),
       ),
-      backgroundColor: Color(0xFFeceef0),
+       backgroundColor: Color(0xfff8f9fa),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 60),
@@ -28,7 +28,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),
-                  color: Color(0xFFf8f9fa),
+                  color: Color(0xFFffffff),
                 ),
               ), SizedBox(height: 20),
              Container( 
@@ -37,7 +37,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),
-                  color: Color(0xFFf8f9fa),
+                  color: Color(0xFFffffff),
                 ),
               ), SizedBox(height: 20),
               Container( 
@@ -46,7 +46,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),
-                  color: Color(0xFFf8f9fa),
+                  color: Color(0xFFffffff),
                 ),
               ),
             ],

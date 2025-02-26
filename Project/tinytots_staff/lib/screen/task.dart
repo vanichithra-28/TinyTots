@@ -15,7 +15,7 @@ class _TaskState extends State<Task> {
         backgroundColor: Color(0xffffffff),
         title: Text('Task'),
       ),
-      backgroundColor: Color(0xFFeceef0),
+        backgroundColor: Color(0xfff8f9fa),
       body: Column(
         children: [
           Text('hi')

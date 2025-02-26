@@ -15,7 +15,7 @@ class _ChildActivityState extends State<ChildActivity> {
         backgroundColor: Color(0xffffffff),
         title: Text('Child Activity'),
       ),
-      backgroundColor: Color(0xFFeceef0),
+       backgroundColor: Color(0xfff8f9fa),
     );
     
   }
