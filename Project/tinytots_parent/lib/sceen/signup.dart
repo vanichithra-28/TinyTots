@@ -13,14 +13,15 @@ class Signup extends StatefulWidget {
 
 class _SignupState extends State<Signup> {
   @override
-  final TextEditingController nameControllor = TextEditingController();
-  final TextEditingController emailControllor = TextEditingController();
+  final TextEditingController nameController = TextEditingController();
+  final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
   final TextEditingController proofController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
+
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -32,58 +33,68 @@ class _SignupState extends State<Signup> {
   }
 
   Future<void> register() async {
-    try {
-      final  auth = await supabase.auth.signUp(
-          password: passwordController.text, email: emailControllor.text);
-      print("Error:$auth");
-      final  uid = auth.user!.id;
-      print(uid);
-      if (uid.isEmpty || uid != "") {
-        storeData(uid);
-      }
-      Navigator.pushReplacement(
-          context, MaterialPageRoute(builder: (context) => Dashboard()));
-    } catch (e) {
-      print("Error auth: $e");
+  try {
+    // Sign up user
+    final authResponse = await supabase.auth.signUp(
+      password: passwordController.text,
+      email: emailController.text,
+    );
+    final user = authResponse.user;
+    if (user == null) throw Exception('Sign up failed');
+
+    final uid = user.id;
+
+    // Upload image
+    String? imageUrl;
+    if (_image != null) {
+      imageUrl = await uploadImage();
     }
+
+    // Insert parent data
+    await supabase.from('tbl_parent').insert({
+      'id': uid,
+      'parent_name': nameController.text,
+      'parent_contact': contactController.text,
+      'parent_address': addressController.text,
+      'parent_proof': proofController.text,
+      'parent_photo': imageUrl,
+      'parent_email': emailController.text,
+      'parent_pwd': passwordController.text,
+    });
+
+    // Navigate only after success
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (context) => Dashboard()),
+    );
+  } catch (e) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: Text('Error: $e'),
+        backgroundColor: Colors.red,
+      ),
+    );
   }
+}
 
-  Future<void> storeData(uid) async {
-    try {
-      String name = nameControllor.text;
-      String email = emailControllor.text;
-      String password = passwordController.text;
-      String contact = contactController.text;
-      String address = addressController.text;
-      String proof = proofController.text;
-      await supabase.from('tbl_parent').insert({
-        'id': uid,
-        'parent_name': name,
-        'parent_email': email,
-        'parent_pwd': password,
-        'parent_contact': contact,
-        'parent_address': address,
-        'parent_proof': proof,
-      });
-
-      print("Data inserted");
-
-      final imageUrl = await uploadImage(uid);
-      await updateData(uid, imageUrl);
-      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text(
-          " added",
-          style: TextStyle(color: Colors.white),
-        ),
-        backgroundColor: Colors.green,
-      ));
-    } catch (e) {
-      print("Error inserting parents data:$e");
-    }
+   Future<void> updateData() async {
+  try {
+    final uid = supabase.auth.currentUser!.id;
+    
+    await supabase.from('tbl_parent').update({
+      'parent_name': nameController.text,
+      'parent_contact': contactController.text,
+      'parent_address': addressController.text,
+      'parent_proof': proofController.text,
+    }).eq('id', uid); // Use UID from auth
+  } catch (e) {
+    print("Update error: $e");
   }
+}
 
-  Future<void> updateData(final uid, final url) async {
+  Future<void> updateImage(String? url) async {
     try {
+      String uid = supabase.auth.currentUser!.id;
       await supabase
           .from('tbl_parent')
           .update({'parent_photo': url}).eq("id", uid);
@@ -92,20 +103,26 @@ class _SignupState extends State<Signup> {
     }
   }
 
-  Future<String?> uploadImage(String uid) async {
-    try {
-      final fileName = '$uid';
+  Future<String?> uploadImage() async {
+  if (_image == null) return null;
+  
+  try {
+    final uid = supabase.auth.currentUser!.id;
+    final timestamp = DateTime.now().millisecondsSinceEpoch;
+    final fileName = '$uid-photo-$timestamp';
 
-      await supabase.storage.from('parent').upload(fileName, _image!);
+    await supabase.storage
+        .from('parent')
+        .upload(fileName, _image!);
 
-      // Get public URL of the uploaded image
-      final imageUrl = supabase.storage.from('parent').getPublicUrl(fileName);
-      return imageUrl;
-    } catch (e) {
-      print('Image upload failed: $e');
-      return null;
-    }
+    return supabase.storage
+        .from('parent')
+        .getPublicUrl(fileName);
+  } catch (e) {
+    print('Upload error: $e');
+    return null;
   }
+}
 
   Widget build(BuildContext context) {
     return Scaffold(
@@ -139,7 +156,7 @@ class _SignupState extends State<Signup> {
                     ),
                   ),
                   TextFormField(
-                    controller: nameControllor,
+                    controller: nameController,
                     decoration: InputDecoration(
                         labelText: 'Username',
                         border: OutlineInputBorder(
@@ -149,7 +166,7 @@ class _SignupState extends State<Signup> {
                     height: 10,
                   ),
                   TextFormField(
-                    controller: emailControllor,
+                    controller: emailController,
                     decoration: InputDecoration(
                         labelText: 'Email',
                         border: OutlineInputBorder(

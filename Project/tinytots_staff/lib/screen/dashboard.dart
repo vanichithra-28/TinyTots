@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:tinytots_staff/screen/dashboard_content.dart';
-import 'package:tinytots_staff/screen/login.dart';
+
+import 'package:tinytots_staff/screen/menu.dart';
+import 'package:tinytots_staff/screen/mypost.dart';
 import 'package:tinytots_staff/screen/post.dart';
 import 'package:tinytots_staff/screen/profile.dart';
 
@@ -19,11 +21,11 @@ class _DashboardState extends State<Dashboard> {
     "Dashboard",
     "Account",
     "New post",
-    "Dashboard",
-    "Dashboard",
+    "My post",
+    "Menu",
   ];
 
-  List<Widget> pages = [DashboardContent(), Profile(), Post(), Post(), Login()];
+  List<Widget> pages = [DashboardContent(), Profile(), Post(), Mypost(), Menu()];
 
   @override
   Widget build(BuildContext context) {
@@ -36,7 +38,8 @@ class _DashboardState extends State<Dashboard> {
       body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 30,
-        selectedItemColor: Color(0xffcb997e),
+        selectedItemColor: Color(0xFF000000),
+        unselectedItemColor: Color(0xFF000000),
         backgroundColor: Color(0xFFFFFFFF),
         currentIndex: _selectedIndex,
         showSelectedLabels: false,
@@ -51,7 +54,7 @@ class _DashboardState extends State<Dashboard> {
             icon: HugeIcon(
               icon: HugeIcons.strokeRoundedHome12,
               color: Colors.black,
-              size: 30.0,
+               size: 30.0,
             ),
             label: '',
           ), 

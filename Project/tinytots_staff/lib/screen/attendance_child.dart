@@ -18,13 +18,13 @@ class _AttendanceChildState extends State<AttendanceChild> {
        backgroundColor: Color(0xfff8f9fa),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 60),
+          padding: const EdgeInsets.symmetric(horizontal: 50),
           child: Column(
             children: [
               SizedBox(height: 20),
               Container( 
                 height: 250,
-                width: 250,
+                width: 500,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),
@@ -33,7 +33,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
               ), SizedBox(height: 20),
              Container( 
                 height: 250,
-                width: 250,
+                width: 500,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),
@@ -42,7 +42,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
               ), SizedBox(height: 20),
               Container( 
                 height: 250,
-                width: 250,
+                width: 500,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.all( Radius.circular(35)
                   ),

@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
-
+import 'package:hugeicons/hugeicons.dart';
+import 'package:tinytots_parent/sceen/dashboard_content.dart';
+import 'package:tinytots_parent/sceen/menu.dart';
+import 'package:tinytots_parent/sceen/posts.dart';
+import 'package:tinytots_parent/sceen/profile.dart';
 
 class Dashboard extends StatefulWidget {
   const Dashboard({super.key});
@@ -11,141 +15,70 @@ class Dashboard extends StatefulWidget {
 class _DashboardState extends State<Dashboard> {
   int _selectedIndex = 0;
 
-  void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
-  }
+  List<String> pageTitle = [
+    "Dashboard",
+    "Profile",
+    "Post",
+    "Menu",
+  ];
+
+  List<Widget> pages = [DashboardContent(), Profile(), Posts(), Menu()];
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      
       appBar: AppBar(
         backgroundColor: Color(0xffffffff),
-        title: Text('Dashboard'),
+        title: Text(pageTitle[_selectedIndex]),
       ),
       backgroundColor: Color(0xfff8f9fa),
-
-            body: SingleChildScrollView(
-        
-        child: Column(
-          
-          children: [
-            
-            Container(
-              height: 300,
-              width: 400,
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.only(bottomLeft: Radius.circular(35), bottomRight: Radius.circular(35)),
-                color: const Color(0xFFffffff),
-               boxShadow: [BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
-                spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),) ]
-              ),
-            child: Column(
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 100,
-                          width: 70,
-                          decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFfd4a373),
-                                      ),),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                           height: 100,
-                          width: 70,
-                          decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xFF9d8189),
-                                      ),),
-                      ),
-                    ),
-                
-                  ],
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                          height: 100,
-                          width: 70,
-                          decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xffadc178),
-                                      ),
-                          ),
-                      ),
-                    ),
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Container(
-                           height: 100,
-                          width: 70,
-                          decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(40),
-                        color: const Color(0xffff928b),
-                                      ),),
-                      ),
-                    ),
-                
-                  ],
-                ),
-              ],
-            ),
-            
-            ),
-           
-            
-          ],
-        ),
-      ),
-      
+      body: pages[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         iconSize: 30,
-        selectedItemColor: Color(0xffcb997e),
+        selectedItemColor: Color(0xFF000000),
+        unselectedItemColor: Color(0xFF000000),
         backgroundColor: Color(0xFFFFFFFF),
         currentIndex: _selectedIndex,
-        onTap: _onItemTapped,
-        type: BottomNavigationBarType.fixed, // Allows more than 3 items
-        items: const [
+        showSelectedLabels: false,
+        onTap: (value) {
+          setState(() {
+            _selectedIndex = value;
+          });
+        },
+        type: BottomNavigationBarType.fixed,
+        items: [
           BottomNavigationBarItem(
-            icon: Icon(Icons.home,color: Color(0xff023047),),
+            icon: HugeIcon(
+              icon: HugeIcons.strokeRoundedHome12,
+              color: Colors.black,
+               size: 30.0,
+            ),
+            label: '',
+          ), 
+         
+          BottomNavigationBarItem(
+            icon: HugeIcon(
+  icon: HugeIcons.strokeRoundedUser,
+  color: Colors.black,
+  size: 30.0,
+),
             label: '',
           ),
           BottomNavigationBarItem(
-            
-            icon: Icon(Icons.create,color: Color(0xff023047),),
+            icon: HugeIcon(
+  icon: HugeIcons.strokeRoundedVideoReplay,
+  color: Colors.black,
+  size: 30.0,
+),
             label: '',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.person,color: Color(0xff023047),),
+            icon: HugeIcon(
+              icon: HugeIcons.strokeRoundedMenu02,
+              color: Colors.black,
+              size: 30.0,
+            ),
             label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.notifications,color: Color(0xff023047),),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.logout,color: Color(0xff023047),),
-            label: '',
-            
-          
           ),
         ],
       ),

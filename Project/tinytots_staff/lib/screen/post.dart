@@ -81,7 +81,7 @@ class _PostState extends State<Post> {
             "Post added successfully",
             style: TextStyle(color: Colors.white),
           ),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black54,
         ),
       );
 

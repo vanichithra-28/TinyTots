@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:tinytots_staff/main.dart';
 import 'package:intl/intl.dart';
 
@@ -10,10 +11,16 @@ class ViewPost extends StatefulWidget {
 }
 
 class _ViewPostState extends State<ViewPost> {
-  List<Map<String,dynamic>>_postList =[];
+  List<Map<String, dynamic>> _postList = [];
+  
+
   Future<void> display() async {
     try {
-    final response = await supabase.from('tbl_post').select().order('created_at', ascending: false);;
+      final response = await supabase
+          .from('tbl_post')
+          .select()
+          .order('created_at', ascending: false);
+      ;
       setState(() {
         _postList = response;
       });
@@ -21,10 +28,26 @@ class _ViewPostState extends State<ViewPost> {
       print('ERROR DISPLAYING POST $e');
     }
   }
-   String formatDate(String timestamp) {
-    DateTime dateTime = DateTime.parse(timestamp);
-    return DateFormat('yyyy-MM-dd').format(dateTime); // Format as needed
+
+  String formatTimeAgo(String timestamp) {
+  DateTime postTime = DateTime.parse(timestamp);
+  Duration difference = DateTime.now().difference(postTime);
+
+  if (difference.inMinutes < 1) {
+    return 'Just now';
+  } else if (difference.inMinutes < 60) {
+    return '${difference.inMinutes} minutes ago';
+  } else if (difference.inHours < 24) {
+    return '${difference.inHours} hours ago';
+  } else if (difference.inDays == 1) {
+    return '1 day ago at ${DateFormat('HH:mm').format(postTime)}';
+  } else if (difference.inDays < 7) {
+    return '${difference.inDays} days ago';
+  } else {
+    return 'on ${DateFormat('MMMM d, yyyy').format(postTime)}';
   }
+}
+
 
   @override
   void initState() {
@@ -40,37 +63,56 @@ class _ViewPostState extends State<ViewPost> {
         backgroundColor: Color(0xffffffff),
         title: Text('Posts'),
       ),
-       backgroundColor: Color(0xfff8f9fa),
+      backgroundColor: Color(0xfff8f9fa),
       body: ListView.builder(
-        itemCount:_postList.length ,
-        itemBuilder: (context, index){
-          final post = _postList[index];
-          return Card(color: Color(0xffffffff),
-          
-          child: Column(
-            children: [
-              GestureDetector(
-                child: Container(
-                  height: 250,
-                  
-                  decoration: BoxDecoration(
-                    image: DecorationImage(image: NetworkImage(post['post_file']),fit: BoxFit.cover)
-                  ),
-                ),
-              ),
-              SizedBox(height: 15,),
-              Row(
+          itemCount: _postList.length,
+          itemBuilder: (context, index) {
+            final post = _postList[index];
+            return Container(
+              color: Color(0xffffffff),
+              child: Column(
                 children: [
-                  Expanded(child: Text(post['post_title'])),
-                   Expanded(child: Text(formatDate(post['created_at']))),
+                  Stack(children: [
+                    Container(
+                      height: 620,
+                      decoration: BoxDecoration(
+                          border: Border.all(color: Colors.white, width: 2.5),
+                          image: DecorationImage(
+                              image: NetworkImage(post['post_file']),
+                              fit: BoxFit.cover)),
+                    ),
+                    Positioned(
+                      top: 5,
+                      right: 5,
+                      child: PopupMenuButton<String>(
+                        icon: HugeIcon(
+  icon: HugeIcons.strokeRoundedMoreVertical,
+  color: Colors.white,
+  size: 35.0,
+),
+                        onSelected: (String result) {
+                         
+                        },
+                        itemBuilder: (BuildContext context) =>
+                            <PopupMenuEntry<String>>[
+                          const PopupMenuItem<String>(
+                            value: '',
+                            child: Text('...'),
+                          ),
+                          // Add more menu items here if needed
+                        ],
+                      ),
+                    ),
+                  ]),
+                  SizedBox(
+                    height: 15,
+                  ),
+                  Text(post['post_title']),
+                  Text(formatTimeAgo(post['created_at'])),
                 ],
               ),
-              
-              
-            ],
-          ),);
-
-      }),
+            );
+          }),
     );
   }
 }

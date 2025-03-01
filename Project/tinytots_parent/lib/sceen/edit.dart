@@ -3,7 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:tinytots_staff/main.dart';
+import 'package:tinytots_parent/main.dart';
+
 
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
@@ -34,8 +35,8 @@ class _EditProfileState extends State<EditProfile> {
     try {
       String uid = supabase.auth.currentUser!.id;
       await supabase
-          .from('tbl_staff')
-          .update({'staff_photo': url}).eq("id", uid);
+          .from('tbl_parent')
+          .update({'parent_photo': url}).eq("id", uid);
     } catch (e) {
       print("Image updation failed: $e");
     }
@@ -46,15 +47,15 @@ class _EditProfileState extends State<EditProfile> {
      
       if (staffData != null) {
         final response = await supabase
-            .from('tbl_staff')
+            .from('tbl_parent')
             .select()
             .eq('id', supabase.auth.currentUser!.id)
             .single();
         setState(() {
           staffData = response;
-          nameController.text = response['staff_name'];
-          contactController.text = response['staff_contact'];
-          addressController.text = response['staff_address'];
+          nameController.text = response['parent_name'];
+          contactController.text = response['parent_contact'];
+          addressController.text = response['parent_address'];
         });
       } else {
         print("Error");
@@ -66,10 +67,10 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> updateData() async {
     try {
-      await supabase.from('tbl_staff').update({
-        'staff_name': nameController.text,
-        'staff_contact': contactController.text,
-        'staff_address': addressController.text,
+      await supabase.from('tbl_parent').update({
+        'parent_name': nameController.text,
+        'parent_contact': contactController.text,
+        'parent_address': addressController.text,
       }).eq('id', staffData['id']);
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
@@ -80,7 +81,7 @@ class _EditProfileState extends State<EditProfile> {
           backgroundColor: Colors.black45,
         ),
       );
-      await display();
+      display();
     } catch (e) {
       print("ERROR UPDATING PROFILE:$e");
     }
@@ -95,10 +96,10 @@ Future<String?> uploadImage() async {
     final fileName = '$uid-photo-$timestamp'; 
 
     // Upload the image to Supabase storage
-    await supabase.storage.from('Staff').upload(fileName, _image!);
+    await supabase.storage.from('parent').upload(fileName, _image!);
 
     // Get the public URL of the uploaded image
-    final imageUrl = supabase.storage.from('Staff').getPublicUrl(fileName);
+    final imageUrl = supabase.storage.from('parent').getPublicUrl(fileName);
     return imageUrl;
   } catch (e) {
     print('Image upload failed: $e');
@@ -149,7 +150,7 @@ Future<String?> uploadImage() async {
                       radius: 70,
                       backgroundColor: Colors.white38,
                       backgroundImage:
-                          _image != null ? FileImage(_image!) : NetworkImage(staffData['staff_photo'] ?? ""),
+                          _image != null ? FileImage(_image!) : NetworkImage(staffData['parent_photo'] ?? ""),
                       child: _image == null
                           ? const HugeIcon(
   icon: HugeIcons.strokeRoundedCameraAdd01,

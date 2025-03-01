@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:tinytots_staff/screen/login.dart';
+import 'package:tinytots_parent/sceen/intro.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key});
@@ -23,7 +23,7 @@ class _MenuState extends State<Menu> {
               Text(' Logout  '),
               GestureDetector(
                 onTap: () {
-                  Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => Login()));
+                  Navigator.pushReplacement(context, MaterialPageRoute(builder:(context) => Intro()));
                 },
                 child: HugeIcon(
                  
