@@ -29,7 +29,7 @@ class _AdmissionState extends State<Admission> {
                 margin: EdgeInsets.all(16), // Margin outside the container
                 decoration: BoxDecoration(
                   color: Color(0xffffffff), // Background color of the container
-                  borderRadius: BorderRadius.circular(12), // Rounded corners
+                   // Rounded corners
                   border: Border.all(
                     color: Color(0xFFeceef0), // Border color
                     width: 2, // Border width
@@ -40,26 +40,34 @@ class _AdmissionState extends State<Admission> {
       [
         DataColumn(label: Text("Sl.No",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                               DataColumn(label: Text("Name",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                                DataColumn(label: Text("Application Date",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                               DataColumn(label: Text("Admission Status",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                               DataColumn(label: Text("View Details",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
       ], rows:  _admissionList.asMap().entries.map((entry){
         return DataRow(cells: [
           DataCell(Text((entry.key+1).toString())),
           DataCell(Text(entry.value['name']),),
             DataCell(Text(entry.value['created_at'])),
-           DataCell(Text(entry.value['status'])),
-            DataCell(Text("View")),
+DataCell(entry.value['status'] == 1
+                          ? Text(
+                              'Completed',
+                              style: TextStyle(color: Colors.green),
+                            )
+                          : Text(
+                             'Pending',
+                              style: TextStyle(color: Colors.red),
+                            )),
+                                        DataCell(Text("View")),
         ]);
       }).toList(),
     )));

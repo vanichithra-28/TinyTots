@@ -44,7 +44,7 @@ class _PostsState extends State<Posts> {
   } else if (difference.inDays < 7) {
     return '${difference.inDays} days ago';
   } else {
-    return 'on ${DateFormat('MMMM d, yyyy').format(postTime)}';
+    return ' ${DateFormat('MMMM d, yyyy').format(postTime)}';
   }
 }
 

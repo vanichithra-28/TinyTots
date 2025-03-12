@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:tinytots_parent/sceen/attendance.dart';
+import 'package:tinytots_parent/sceen/children.dart';
+import 'package:tinytots_parent/sceen/events.dart';
+import 'package:tinytots_parent/sceen/payment.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({super.key});
@@ -37,7 +41,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DashboardContent()));
+                                      builder: (context) => Children()));
                             },
                             child: Container(
                               height: 130,
@@ -48,7 +52,7 @@ class DashboardContent extends StatelessWidget {
                               ),
                               child: Center(
                                 child: Text(
-                                  'Tasks',
+                                  'Child profile',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -67,7 +71,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DashboardContent()));
+                                      builder: (context) => Attendance()));
                             },
                             child: Container(
                               height: 130,
@@ -101,7 +105,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) =>DashboardContent()));
+                                      builder: (context) =>Events()));
                             },
                             child: Container(
                               height: 130,
@@ -111,7 +115,7 @@ class DashboardContent extends StatelessWidget {
                                   color: Color(0xffadc178)),
                               child: Center(
                                 child: Text(
-                                  'Activity',
+                                  'Events',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
@@ -130,7 +134,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => DashboardContent()));
+                                      builder: (context) => Payment()));
                             },
                             child: Container(
                               height: 130,
@@ -140,7 +144,7 @@ class DashboardContent extends StatelessWidget {
                                   color: Color(0xffff928b)),
                               child: Center(
                                 child: Text(
-                                  'Post',
+                                  'xyz',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,

@@ -11,7 +11,11 @@ class _EventParticipationState extends State<EventParticipation> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body:Column(children: [ Text('tght'),]),
+      appBar: AppBar(
+        title: Text('Event Participation'),
+        backgroundColor: Color(0xFFffffff),
+      ),
+      backgroundColor: Color(0xFFf8f9fa),
     );
   }
 }

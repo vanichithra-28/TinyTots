@@ -10,6 +10,12 @@ class Activities extends StatefulWidget {
 class _ActivitiesState extends State<Activities> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Activities'),
+        backgroundColor: Color(0xFFffffff),
+      ),
+      backgroundColor: Color(0xFFf8f9fa),
+    );
   }
 }

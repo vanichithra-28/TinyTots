@@ -21,7 +21,7 @@ class _SideBarState extends State<SideBar> {
     "Staff",
     "Admission",
     "Parent",
-    "Classroom",
+    "Classrooms",
     "Events",
     "Attendance",
     "Fee",

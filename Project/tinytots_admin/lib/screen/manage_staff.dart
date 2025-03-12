@@ -294,7 +294,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
           style: TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.bold,
-              color: Color(0xffB4B4B6)),
+              color: Color(0xff8b8c89)),
         ),
         SingleChildScrollView(
           scrollDirection: Axis.horizontal,
@@ -316,37 +316,37 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                             DataColumn(
                     label: Text('Photo',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                 DataColumn(
                     label: Text('Name',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                 DataColumn(
                     label: Text('Email',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                 DataColumn(
                     label: Text('Contact',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                 DataColumn(
                     label: Text('Start Date',
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
                 DataColumn(
                     label: Text('',
                         style: TextStyle(
@@ -355,13 +355,13 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     label: Text('Action',
                         style: TextStyle(
                             fontSize: 16, fontWeight: FontWeight.bold,
-                            color: Color(0xffB4B4B6)))),
+                            color: Color(0xff8b8c89)))),
               ],
               rows: _staffList.asMap().entries.map((entry) {
                 return DataRow(cells: [
                   DataCell(Text(
                     (entry.key + 1).toString(),
-                    style: TextStyle(color: Color(0xffB4B4B6)),
+                    style: TextStyle(color: Color(0xff8b8c89)),
                   )),
                   DataCell(
                     CircleAvatar(
@@ -371,20 +371,20 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                   DataCell(
                     Text(
                       entry.value['staff_name'],
-                      style: TextStyle(color: Color(0xffB4B4B6)),
+                      style: TextStyle(color: Color(0xff8b8c89)),
                     ),
                   ),
                   DataCell(Text(
                     entry.value['staff_email'],
-                    style: TextStyle(color: Color(0xffB4B4B6)),
+                    style: TextStyle(color: Color(0xff8b8c89)),
                   )),
                   DataCell(Text(
                     entry.value['staff_contact'],
-                    style: TextStyle(color: Color(0xffB4B4B6)),
+                    style: TextStyle(color: Color(0xff8b8c89)),
                   )),
                   DataCell(Text(
                     entry.value['created_at'],
-                    style: TextStyle(color: Color(0xffB4B4B6)),
+                    style: TextStyle(color: Color(0xff8b8c89)),
                   )),
                   DataCell(IconButton(
                     icon: Icon(Icons.delete),

@@ -199,7 +199,7 @@ class _Fee_structureState extends State<Fee_structure>
           height: 20,
         ),
         Text("FEE DETAILS",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6))),
+            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xff8b8c89))),
         SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Container(
@@ -207,7 +207,6 @@ class _Fee_structureState extends State<Fee_structure>
               margin: EdgeInsets.all(16), // Margin outside the container
               decoration: BoxDecoration(
                 color: Color(0xffffffff), // Background color of the container
-                borderRadius: BorderRadius.circular(12), // Rounded corners
                 border: Border.all(
                   color: Color(0xFFeceef0), // Border color
                   width: 2, // Border width
@@ -219,38 +218,38 @@ class _Fee_structureState extends State<Fee_structure>
                   DataColumn(
                       label: Text("Sl.No",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                   DataColumn(
                       label: Text("Fees amount",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                   DataColumn(
                       label: Text("Fees details",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                   DataColumn(
                       label: Text("Fees name",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                   DataColumn(
                       label: Text("Delete",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                   DataColumn(
                       label: Text("Edit",
                           style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xffB4B4B6)))),
+                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff8b8c89)))),
                 ],
                 rows: _feesList.asMap().entries.map((entry) {
                   return DataRow(cells: [
                     DataCell(Text((entry.key + 1).toString(),style:TextStyle(
-                              color: Color(0xffB4B4B6)) ,)),
+                              color: Color(0xff8b8c89)) ,)),
                     DataCell(Text(entry.value['fee_amount'],style:TextStyle(
-                              color: Color(0xffB4B4B6)) ,),),
+                              color: Color(0xff8b8c89)) ,),),
                     DataCell(Text(entry.value['fee_details'],style:TextStyle(
-                              color: Color(0xffB4B4B6)) ,)),
+                              color: Color(0xff8b8c89)) ,)),
                     DataCell(Text(entry.value['fee_name'],style:TextStyle(
-                              color: Color(0xffB4B4B6)) ,)),
+                              color: Color(0xff8b8c89)) ,)),
                     DataCell(
                       IconButton(
                         onPressed: () {

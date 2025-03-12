@@ -19,11 +19,31 @@ class _LoginState extends State<Login> {
 
   Future<void> signin() async {
     try {
-      await supabase.auth.signInWithPassword(
+      final response = await supabase.auth.signInWithPassword(
   email: emailController.text.trim(),
   password:passwordController.text.trim(),
 );
-   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())); 
+   final user = response.user;
+    if (user != null) {
+      final parentData = await supabase
+          .from('tbl_staff')
+          .select()
+          .eq('staff_email', emailController.text.trim())
+          .single();
+
+      if (parentData != null) {
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => Dashboard()),
+        );
+      } else {
+        CherryToast.error(
+          description: Text("Access denied. Only staffs can log in."),
+          animationType: AnimationType.fromRight,
+          autoDismiss: true,
+        ).show(context);
+      }
+    }
   
     } catch (e) {
        

@@ -2,7 +2,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/dashboard.dart';
+import 'package:tinytots_parent/sceen/childreg.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -12,7 +13,6 @@ class Signup extends StatefulWidget {
 }
 
 class _SignupState extends State<Signup> {
-  @override
   final TextEditingController nameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -21,7 +21,6 @@ class _SignupState extends State<Signup> {
   final TextEditingController proofController = TextEditingController();
   File? _image;
   final ImagePicker _picker = ImagePicker();
-
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -32,200 +31,142 @@ class _SignupState extends State<Signup> {
     }
   }
 
+  Future<void> saveParentId(String parentId) async {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setString('parentId', parentId);
+  }
+
   Future<void> register() async {
-  try {
-    // Sign up user
-    final authResponse = await supabase.auth.signUp(
-      password: passwordController.text,
-      email: emailController.text,
-    );
-    final user = authResponse.user;
-    if (user == null) throw Exception('Sign up failed');
-
-    final uid = user.id;
-
-    // Upload image
-    String? imageUrl;
-    if (_image != null) {
-      imageUrl = await uploadImage();
-    }
-
-    // Insert parent data
-    await supabase.from('tbl_parent').insert({
-      'id': uid,
-      'parent_name': nameController.text,
-      'parent_contact': contactController.text,
-      'parent_address': addressController.text,
-      'parent_proof': proofController.text,
-      'parent_photo': imageUrl,
-      'parent_email': emailController.text,
-      'parent_pwd': passwordController.text,
-    });
-
-    // Navigate only after success
-    Navigator.pushReplacement(
-      context,
-      MaterialPageRoute(builder: (context) => Dashboard()),
-    );
-  } catch (e) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text('Error: $e'),
-        backgroundColor: Colors.red,
-      ),
-    );
-  }
-}
-
-   Future<void> updateData() async {
-  try {
-    final uid = supabase.auth.currentUser!.id;
-    
-    await supabase.from('tbl_parent').update({
-      'parent_name': nameController.text,
-      'parent_contact': contactController.text,
-      'parent_address': addressController.text,
-      'parent_proof': proofController.text,
-    }).eq('id', uid); // Use UID from auth
-  } catch (e) {
-    print("Update error: $e");
-  }
-}
-
-  Future<void> updateImage(String? url) async {
     try {
-      String uid = supabase.auth.currentUser!.id;
-      await supabase
-          .from('tbl_parent')
-          .update({'parent_photo': url}).eq("id", uid);
+      final authResponse = await supabase.auth.signUp(
+        password: passwordController.text,
+        email: emailController.text,
+      );
+      final user = authResponse.user;
+      if (user == null) throw Exception('Sign up failed');
+
+      final uid = user.id;
+
+      String? imageUrl;
+      if (_image != null) {
+        imageUrl = await uploadImage();
+      }
+
+      await supabase.from('tbl_parent').insert({
+        'id': uid,
+        'parent_name': nameController.text.trim(),
+        'parent_contact': contactController.text.trim(),
+        'parent_address': addressController.text.trim(),
+        'parent_proof': proofController.text.trim(),
+        'parent_photo': imageUrl,
+        'parent_email': emailController.text.trim(),
+        'parent_pwd': passwordController.text.trim(),
+      });
+
+      await saveParentId(uid);
+
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => ChildRegistration()),
+      );
     } catch (e) {
-      print("Image updation failed: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Error: $e'),
+          backgroundColor: Colors.red,
+        ),
+      );
     }
   }
 
   Future<String?> uploadImage() async {
-  if (_image == null) return null;
-  
-  try {
-    final uid = supabase.auth.currentUser!.id;
-    final timestamp = DateTime.now().millisecondsSinceEpoch;
-    final fileName = '$uid-photo-$timestamp';
+    if (_image == null) return null;
+    try {
+      final uid = supabase.auth.currentUser!.id;
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = '$uid-photo-$timestamp';
 
-    await supabase.storage
-        .from('parent')
-        .upload(fileName, _image!);
+      await supabase.storage
+          .from('parent')
+          .upload(fileName, _image!);
 
-    return supabase.storage
-        .from('parent')
-        .getPublicUrl(fileName);
-  } catch (e) {
-    print('Upload error: $e');
-    return null;
+      return supabase.storage
+          .from('parent')
+          .getPublicUrl(fileName);
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
   }
-}
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xfff8f9fa),
+      backgroundColor: const Color(0xfff8f9fa),
       appBar: AppBar(
-        backgroundColor: Color(0xFFffffff),
+        backgroundColor: const Color(0xFFffffff),
       ),
       body: Form(
-          child: Padding(
-        padding: EdgeInsets.only(bottom: 10.0),
-        child: SingleChildScrollView(
-          child: Container(
-            height: 600,
-            child: Padding(
+        child: Padding(
+          padding: const EdgeInsets.only(bottom: 10.0),
+          child: SingleChildScrollView(
+            child: Container(
+              height: 650,
               padding: const EdgeInsets.all(10.0),
               child: Column(
                 children: [
+                  const Text('Parent Registration'),
                   Center(
                     child: GestureDetector(
                       onTap: _pickImage,
                       child: CircleAvatar(
                         radius: 50,
                         backgroundColor: Colors.white38,
-                        backgroundImage:
-                            _image != null ? FileImage(_image!) : null,
+                        backgroundImage: _image != null ? FileImage(_image!) : null,
                         child: _image == null
-                            ? const Icon(Icons.camera_alt,
-                                color: Colors.black, size: 50)
+                            ? const Icon(Icons.camera_alt, color: Colors.black, size: 50)
                             : null,
                       ),
                     ),
                   ),
-                  TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        labelText: 'Username',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: emailController,
-                    decoration: InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: passwordController,
-                    decoration: InputDecoration(
-                        labelText: 'Password',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: contactController,
-                    decoration: InputDecoration(
-                        labelText: 'Contact',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: addressController,
-                    decoration: InputDecoration(
-                        labelText: 'Address',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
-                  TextFormField(
-                    controller: proofController,
-                    decoration: InputDecoration(
-                        labelText: 'Proof',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
+                  ..._buildTextFields(),
+                  const SizedBox(height: 10),
                   ElevatedButton(
-                      onPressed: () {
-                        register();
-                      },
-                      child: Text('SIGNUP'))
+                    onPressed: register,
+                    child: const Text('SIGNUP'),
+                  ),
                 ],
               ),
             ),
           ),
         ),
-      )),
+      ),
     );
+  }
+
+  List<Widget> _buildTextFields() {
+    final fields = [
+      {'controller': nameController, 'label': 'Username'},
+      {'controller': emailController, 'label': 'Email'},
+      {'controller': passwordController, 'label': 'Password'},
+      {'controller': contactController, 'label': 'Contact'},
+      {'controller': addressController, 'label': 'Address'},
+      {'controller': proofController, 'label': 'Proof'},
+    ];
+
+    return fields.map((field) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 10.0),
+        child: TextFormField(
+          controller: field['controller'] as TextEditingController,
+          decoration: InputDecoration(
+            labelText: field['label'] as String,
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(10),
+            ),
+          ),
+        ),
+      );
+    }).toList();
   }
 }
