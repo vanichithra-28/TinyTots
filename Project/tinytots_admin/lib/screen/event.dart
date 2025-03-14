@@ -233,10 +233,14 @@ class _EventsState extends State<Events> {
                       height: 10,
                     ),
                     ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff3e53a0),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4))),
                         onPressed: () {
                           storeData();
                         },
-                        child: Text('submit'))
+                        child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),))
                   ],
                 ),
               ),

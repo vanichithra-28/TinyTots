@@ -82,8 +82,8 @@ class _SideBarState extends State<SideBar> {
               },
              leading: SvgPicture.asset(
   iconPaths[index],
-  height: 30,
-  width: 30,
+  height: 20,
+  width: 20,
   colorFilter: ColorFilter.mode(
     widget.selectedIndex == index ? Colors.black : Color(0xffFFFFFF),
     BlendMode.srcIn,
@@ -108,7 +108,7 @@ class _SideBarState extends State<SideBar> {
           ListTile(
             contentPadding: EdgeInsets.symmetric(horizontal: 80.0),
             leading: Icon(Icons.logout_outlined,
-                size: 30.0, color: Color(0xffFFFFFF)),
+                size: 20.0, color: Color(0xffFFFFFF)),
             onTap: () {
               Navigator.push(
                 context,

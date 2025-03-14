@@ -109,15 +109,19 @@ class _Fee_structureState extends State<Fee_structure>
               padding: const EdgeInsets.only(left: 1100,top: 20),
               
               child: ElevatedButton.icon(
+                 style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff3e53a0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4))),
                 onPressed: () {
                   setState(() {
                     _isFormVisible = !_isFormVisible; // Toggle form visibility
                   });
                 },
-                label: Text(_isFormVisible ? "Cancel" : "Add "),
+                label: Text(_isFormVisible ? "Cancel" : "Add ",style: TextStyle(color: Color(0xFFeceef0)),),
                 icon: Icon(
                   _isFormVisible ? Icons.cancel : Icons.add,
-                  color: Colors.blueAccent,
+                  color: Color(0xFFeceef0),
                 ),
               ),
             ),
@@ -177,6 +181,10 @@ class _Fee_structureState extends State<Fee_structure>
                               width: 10,
                             ),
                             ElevatedButton(
+                               style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff3e53a0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4))),
                                 onPressed: () {
                                   if (_editId != 0) {
                                     updateFees();
@@ -186,7 +194,7 @@ class _Fee_structureState extends State<Fee_structure>
                                     _isFormVisible = false;
                                   }
                                 },
-                                child: Text('submit')),
+                                child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),)),
                           ],
                         ),
                       ),

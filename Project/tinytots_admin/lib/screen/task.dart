@@ -1,6 +1,7 @@
 // ignore_for_file: sort_child_properties_last
 
 import 'dart:math';
+import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
 import 'package:tinytots_admin/main.dart';
@@ -79,7 +80,10 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
       print('ERROR IN DELETING$e');
     }
   }
-
+String formatDate(String timestamp) {
+  DateTime date = DateTime.parse(timestamp);
+  return DateFormat('dd-MM-yyyy').format(date); // Formats to YYYY-MM-DD
+}
   @override
   void initState() {
     super.initState();
@@ -90,6 +94,10 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
   Widget build(BuildContext context) {
     print("Staffid: ${widget.staffId}");
     return Scaffold(
+      appBar: AppBar(
+       backgroundColor:Color(0xff3e53a0),
+        title: Text('Task',style: TextStyle(color: Color(0xffffffff)),),
+      ),
       backgroundColor: Color(0xFFeceef0),
       body: Column(
         children: [
@@ -130,10 +138,14 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
                   width: 10,
                 ),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff3e53a0),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4))),
                     onPressed: () {
                       insert();
                     },
-                    child: Text('submit'))
+                    child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),))
               ],
             ),
           ),
@@ -161,55 +173,55 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                     DataColumn(
                         label: Text('Task',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                     DataColumn(
                         label: Text('Start Date',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                     DataColumn(
                         label: Text('End Date',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                     DataColumn(
                         label: Text('Status',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                     DataColumn(
                         label: Text('Action',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xffB4B4B6)))),
+                                color: Color(0xff8b8c89)))),
                   ],
                   rows: _taskList.asMap().entries.map((entry) {
                     return DataRow(cells: [
                       DataCell(Text(
                         (entry.key + 1).toString(),
-                        style: TextStyle(color: Color(0xffB4B4B6)),
+                        style: TextStyle(color: Color(0xff8b8c89)),
                       )),
                       DataCell(Text(
                         entry.value['task'],
-                        style: TextStyle(color: Color(0xffB4B4B6)),
+                        style: TextStyle(color: Color(0xff8b8c89)),
                       )),
-                      DataCell(Text(
-                        entry.value['created_at'],
-                        style: TextStyle(color: Color(0xffB4B4B6)),
+                      DataCell(Text(formatDate(entry.value['created_at'])
+                        ,
+                        style: TextStyle(color: Color(0xff8b8c89)),
                       )),
-                      DataCell(Text(
-                        entry.value['end_date'],
-                        style: TextStyle(color: Color(0xffB4B4B6)),
+                      DataCell(Text(formatDate(entry.value['end_date'])
+                        ,
+                        style: TextStyle(color: Color(0xff8b8c89)),
                       )),
                       DataCell(entry.value['status'] == 1
                           ? Text(

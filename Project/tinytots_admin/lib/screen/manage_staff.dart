@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'dart:typed_data';
-
+import 'package:intl/intl.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_admin/main.dart';
@@ -129,7 +129,10 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
       print('ERROR IN DELETING$e');
     }
   }
-
+String formatDate(String timestamp) {
+  DateTime date = DateTime.parse(timestamp);
+  return DateFormat('dd-MM-yyyy').format(date); // Formats to YYYY-MM-DD
+}
   @override
   void initState() {
     // TODO: implement initState
@@ -274,10 +277,14 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                               height: 10,
                             ),
                             ElevatedButton(
+                              style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xff3e53a0),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(4))),
                                 onPressed: () {
                                   register();
                                 },
-                                child: Text("Insert"))
+                                child: Text("Insert",style: TextStyle(color: Color(0xFFeceef0)),))
                           ],
                         ),
                       ),
@@ -382,8 +389,7 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     entry.value['staff_contact'],
                     style: TextStyle(color: Color(0xff8b8c89)),
                   )),
-                  DataCell(Text(
-                    entry.value['created_at'],
+                  DataCell(Text(formatDate(entry.value['created_at'],),
                     style: TextStyle(color: Color(0xff8b8c89)),
                   )),
                   DataCell(IconButton(
@@ -393,13 +399,17 @@ class _StaffState extends State<Staff> with SingleTickerProviderStateMixin {
                     },
                   )),
                   DataCell(ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xff3e53a0),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4))),
                     onPressed: () {
                       Navigator.push(
                       context,
                          MaterialPageRoute(
                         builder: (context) =>Task(staffId: entry.value['id'],)));
                     },
-                    child: Text('Assign'),
+                    child: Text('Assign',style: TextStyle(color: Color(0xFFeceef0)),),
                   ))
                 ]);
               }).toList(),

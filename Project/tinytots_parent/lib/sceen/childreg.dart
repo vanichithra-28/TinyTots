@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:tinytots_parent/main.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tinytots_parent/sceen/dashboard.dart';
@@ -15,7 +18,35 @@ class _ChildRegistrationState extends State<ChildRegistration> {
   final TextEditingController genderController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController docController = TextEditingController();
+   File? _image;
+  final ImagePicker _picker = ImagePicker();
 
+  Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+    if (pickedFile != null) {
+      setState(() {
+        _image = File(pickedFile.path);
+      });
+    }
+  }
+ Future<String?> uploadImage() async {
+    if (_image == null) return null;
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = '-photo-$timestamp';
+
+      await supabase.storage
+          .from('child')
+          .upload(fileName, _image!);
+
+      return supabase.storage
+          .from('child')
+          .getPublicUrl(fileName);
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
+  }
   Future<void> insert () async {
     try {
       final prefs = await SharedPreferences.getInstance();
@@ -73,6 +104,19 @@ class _ChildRegistrationState extends State<ChildRegistration> {
             ),
             child: Column(
               children: [
+                 Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 50,
+                        backgroundColor: Colors.white38,
+                        backgroundImage: _image != null ? FileImage(_image!) : null,
+                        child: _image == null
+                            ? const Icon(Icons.camera_alt, color: Colors.black, size: 50)
+                            : null,
+                      ),
+                    ),
+                  ),
                 TextFormField(
                       controller: nameController,
                       decoration: InputDecoration(
