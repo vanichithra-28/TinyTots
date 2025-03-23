@@ -111,10 +111,20 @@ class _LoginState extends State<Login> {
                         onPressed: () {
                          signin();
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFbc6c25),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                        
                         child: Text(
                           'LOGIN',
                           style: TextStyle(
                             fontSize: 18,
+color: Color(0xfff8f9fa)
                           ),
                         )),
                   ],

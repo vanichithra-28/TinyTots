@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
+import 'package:tinytots_parent/main.dart';
 
 class Paymentwindow extends StatefulWidget {
   const Paymentwindow({super.key});
@@ -15,9 +16,21 @@ class _PaymentwindowState extends State<Paymentwindow> {
   String cvv = '';
   bool paymentSuccess = false;
 
-  void processPayment() {
+  bool isValidCardNumber(String value) {
+    return RegExp(r'^[0-9]{16}\$').hasMatch(value);
+  }
+
+  bool isValidExpiryDate(String value) {
+    return RegExp(r'^(0[1-9]|1[0-2])\/([0-9]{2})\$').hasMatch(value);
+  }
+
+  bool isValidCVV(String value) {
+    return RegExp(r'^[0-9]{3,4}\$').hasMatch(value);
+  }
+
+
+  Future<void> processPayment() async {
     if (_formKey.currentState!.validate()) {
-      
       setState(() {
         paymentSuccess = true;
       });
@@ -26,9 +39,16 @@ class _PaymentwindowState extends State<Paymentwindow> {
           SnackBar(content: Text('Payment Successful!')),
         );
         setState(() {
-          paymentSuccess = false; 
+          paymentSuccess = false;
         });
       });
+    }
+    try {
+      await supabase.from('tbl_payment').update(
+        {'status': 1},
+      ).eq('payment_id', 1);
+    } catch (e) {
+      print('Error: $e');
     }
   }
 
@@ -36,10 +56,13 @@ class _PaymentwindowState extends State<Paymentwindow> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFf8f9fa),
-      appBar: AppBar(title: Text('Payment'),backgroundColor: Color(0xFFffffff),),
+      appBar: AppBar(
+        title: Text('Payment'),
+        backgroundColor: Color(0xFFffffff),
+      ),
       body: Center(
         child: paymentSuccess
-            ? Lottie.asset('assets/Animation.json', width: 600,height: 600, repeat: true,)
+            ? Lottie.asset('assets/Animation.json', width: 600, height: 600, repeat: true,)
             : Padding(
                 padding: const EdgeInsets.all(16.0),
                 child: Form(
@@ -51,24 +74,41 @@ class _PaymentwindowState extends State<Paymentwindow> {
                         decoration: InputDecoration(labelText: 'Card Number'),
                         keyboardType: TextInputType.number,
                         onChanged: (value) => cardNumber = value,
-                        validator: (value) =>
-                            value!.isEmpty ? 'Enter card number' : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter card number';
+                          } else if (!isValidCardNumber(value)) {
+                            return 'Enter a valid 16-digit card number';
+                          }
+                          return null;
+                        },
                       ),
                       TextFormField(
-                        keyboardType: TextInputType.number,
-                        decoration:
-                            InputDecoration(labelText: 'Expiry Date (MM/YY)'),
+                        keyboardType: TextInputType.text,
+                        decoration: InputDecoration(labelText: 'Expiry Date (MM/YY)'),
                         onChanged: (value) => expiryDate = value,
-                        validator: (value) =>
-                            value!.isEmpty ? 'Enter expiry date' : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter expiry date';
+                          } else if (!isValidExpiryDate(value)) {
+                            return 'Enter a valid expiry date (MM/YY)';
+                          }
+                          return null;
+                        },
                       ),
                       TextFormField(
                         decoration: InputDecoration(labelText: 'CVV'),
                         keyboardType: TextInputType.number,
                         obscureText: true,
                         onChanged: (value) => cvv = value,
-                        validator: (value) =>
-                            value!.isEmpty ? 'Enter CVV' : null,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Enter CVV';
+                          } else if (!isValidCVV(value)) {
+                            return 'Enter a valid 3 or 4-digit CVV';
+                          }
+                          return null;
+                        },
                       ),
                       SizedBox(height: 20),
                       Center(

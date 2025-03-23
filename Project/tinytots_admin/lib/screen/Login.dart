@@ -18,8 +18,8 @@ class _LoginState extends State<Login> {
    Future<void> signin() async {
     try {
       await supabase.auth.signInWithPassword(
-  email: emailController.text,
-  password:passwordController.text,
+  email: emailController.text.trim(),
+  password:passwordController.text.trim(),
 );
    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())); 
   
@@ -121,7 +121,7 @@ class _LoginState extends State<Login> {
                             labelText: 'Email',
                             border: OutlineInputBorder(
                                 borderRadius: BorderRadius.circular(20)),
-                            prefixIcon: Icon(Icons.person),
+                            prefixIcon: Icon(Icons.email),
                           ),
                         ),
                       ),
@@ -140,11 +140,7 @@ class _LoginState extends State<Login> {
                       SizedBox(height: 30),
                       ElevatedButton(
                         onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                                builder: (context) => Dashboard()),
-                          );
+                          signin();
                         },
                         child: Text(
                           'LOGIN',

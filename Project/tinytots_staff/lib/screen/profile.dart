@@ -83,7 +83,18 @@ class _ProfileState extends State<Profile> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => EditProfile()));                
-                }, child: Text('Edit Profile'),
+                },  style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFbc6c25),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                child: Text('Edit Profile',style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xfff8f9fa),
+                          ),),
                 
                 ),
                 SizedBox(height: 10,),
@@ -92,7 +103,17 @@ class _ProfileState extends State<Profile> {
                       context,
                       MaterialPageRoute(
                           builder: (context) => Change()));                
-                }, child: Text('Change Password'),
+                },  style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFbc6c25),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),child: Text('Change Password',style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xfff8f9fa),
+                          ),),
                 
                 ),
               ],

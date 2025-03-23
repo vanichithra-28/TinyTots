@@ -121,7 +121,12 @@ class _ChildrenState extends State<Children> {
                                     builder: (context) => const Payment()),
                               );
                             },
-                            child: const Text('Fee payment'),
+                             style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFbc6c25),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4))),
+                            child: const Text('Fee payment',style: TextStyle(color: Color(0xfff8f9fa)),),
+                            
                           ),
                         ],
                       ),

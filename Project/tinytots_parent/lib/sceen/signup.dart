@@ -2,8 +2,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/childreg.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:tinytots_parent/sceen/intro.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -29,11 +28,6 @@ class _SignupState extends State<Signup> {
         _image = File(pickedFile.path);
       });
     }
-  }
-
-  Future<void> saveParentId(String parentId) async {
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString('parentId', parentId);
   }
 
   Future<void> register() async {
@@ -63,11 +57,9 @@ class _SignupState extends State<Signup> {
         'parent_pwd': passwordController.text.trim(),
       });
 
-      await saveParentId(uid);
-
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (context) => ChildRegistration()),
+        MaterialPageRoute(builder: (context) => Intro()),
       );
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -124,7 +116,7 @@ class _SignupState extends State<Signup> {
                         backgroundColor: Colors.white38,
                         backgroundImage: _image != null ? FileImage(_image!) : null,
                         child: _image == null
-                            ? const Icon(Icons.camera_alt, color: Colors.black, size: 50)
+                            ? const Icon(Icons.camera_alt, color: Color(0xFFbc6c25), size: 50)
                             : null,
                       ),
                     ),
@@ -133,7 +125,12 @@ class _SignupState extends State<Signup> {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: register,
-                    child: const Text('SIGNUP'),
+                    child: const Text('SIGNUP',style: TextStyle(color: Color(0xfff8f9fa)),),
+                    style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFbc6c25),
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4))),
+              
                   ),
                 ],
               ),

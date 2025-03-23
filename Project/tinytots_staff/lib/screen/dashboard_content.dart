@@ -134,7 +134,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => ViewPost()));
+                                      builder: (context) => Viewpost()));
                             },
                             child: Container(
                               height: 130,

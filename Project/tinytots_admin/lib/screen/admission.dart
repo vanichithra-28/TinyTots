@@ -84,8 +84,10 @@ class _AdmissionState extends State<Admission> {
               ],
               rows: _admissionList.asMap().entries.map((entry) {
                 return DataRow(cells: [
-                  DataCell(Text((entry.key + 1).toString(),style: TextStyle(color: Color(0xff8b8c89)),
-)),
+                  DataCell(Text(
+                    (entry.key + 1).toString(),
+                    style: TextStyle(color: Color(0xff8b8c89)),
+                  )),
                   DataCell(
                     Text(
                       entry.value['name'],

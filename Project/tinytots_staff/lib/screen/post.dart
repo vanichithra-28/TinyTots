@@ -152,12 +152,18 @@ class _PostState extends State<Post> {
                 const SizedBox(height: 20),
                 ElevatedButton(
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blue,
+                    backgroundColor:Color(0xFFbc6c25),
+                    shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
                   ),
                   onPressed: storeData,
                   child: const Text(
                     'Upload',
-                    style: TextStyle(color: Colors.white),
+                    style:TextStyle(
+                            fontSize: 18,
+                            color: Color(0xfff8f9fa),
+                          ),
                   ),
                 ),
                 SizedBox(height: 10,)

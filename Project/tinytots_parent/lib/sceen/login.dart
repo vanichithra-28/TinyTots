@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/dashboard.dart';
+import 'package:tinytots_parent/sceen/account.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:cherry_toast/cherry_toast.dart';
 
@@ -27,7 +27,7 @@ class _LoginState extends State<Login> {
         email: emailController.text.trim(),
         password: passwordController.text.trim(),
       );
-      await Future.delayed(Duration(seconds: 2));
+      await Future.delayed(Duration(seconds: 1));
        final user = response.user;
     if (user != null) {
       final parentData = await supabase
@@ -39,7 +39,7 @@ class _LoginState extends State<Login> {
       if (parentData != null) {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
+          MaterialPageRoute(builder: (context) => Account()),
         );
       } else {
         CherryToast.error(
@@ -68,7 +68,7 @@ class _LoginState extends State<Login> {
   backgroundColor: Color(0xFFeceef0),
   body: Center(
     child: isLoading
-        ? Lottie.asset('assets/Loading.json', width: 200, height: 200)
+        ? Lottie.asset('assets/Loading.json', width: 200, height: 200,)
         : Form(
             child: Padding(
               padding: EdgeInsets.only(top: 110, left: 20, right: 20),
@@ -115,6 +115,14 @@ class _LoginState extends State<Login> {
                       ),
                       SizedBox(height: 50),
                       ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFbc6c25),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
                         onPressed: () {
                           signin();
                         },
@@ -122,6 +130,7 @@ class _LoginState extends State<Login> {
                           'LOGIN',
                           style: TextStyle(
                             fontSize: 18,
+                            color: Color(0xfff8f9fa),
                           ),
                         ),
                       ),

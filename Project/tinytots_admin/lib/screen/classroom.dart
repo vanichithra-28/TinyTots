@@ -15,8 +15,16 @@ class _ClassroomState extends State<Classroom> {
         height: 600,
         width: 1000,
         color: Color(0xffffffff),
-        child: Text('Classroom',style:TextStyle(
-          color: Color(0xffB4B4B6)) ,),
+        child: Center(
+          child: Row(
+            children: [
+              Container(),
+              Container(),
+              Container(),
+            ],
+          ),
+        ),
+          
       ),
     );
   }

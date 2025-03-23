@@ -156,7 +156,18 @@ Future<void> fetchpass() async {
                       onPressed: () {
                         updatepwd();
                       },
-                      child: Text('Update ')),
+                       style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xFFbc6c25),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 50, vertical: 10),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10),
+                          ),
+                        ),
+                      child: Text('Update ',style: TextStyle(
+                            fontSize: 18,
+                            color: Color(0xfff8f9fa),
+                          ),)),
                 ],
               ),
             ),

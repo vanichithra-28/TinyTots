@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:tinytots_parent/sceen/activities.dart';
 import 'package:tinytots_parent/sceen/attendance.dart';
 import 'package:tinytots_parent/sceen/children.dart';
 import 'package:tinytots_parent/sceen/events.dart';
@@ -134,7 +135,7 @@ class DashboardContent extends StatelessWidget {
                               Navigator.push(
                                   context,
                                   MaterialPageRoute(
-                                      builder: (context) => Payment()));
+                                      builder: (context) => Activities()));
                             },
                             child: Container(
                               height: 130,
@@ -144,7 +145,7 @@ class DashboardContent extends StatelessWidget {
                                   color: Color(0xffff928b)),
                               child: Center(
                                 child: Text(
-                                  'xyz',
+                                  'Activity',
                                   style: TextStyle(
                                       fontSize: 20,
                                       fontWeight: FontWeight.bold,
