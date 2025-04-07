@@ -151,7 +151,7 @@ Future<String?> uploadImage() async {
                       backgroundImage:
                           _image != null ? FileImage(_image!) : NetworkImage(staffData['staff_photo'] ?? ""),
                       child: _image == null
-                          ? const HugeIcon(
+                          ?  HugeIcon(
   icon: HugeIcons.strokeRoundedCameraAdd01,
   color: Colors.black12,
   size: 24.0,

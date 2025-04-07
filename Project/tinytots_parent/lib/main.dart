@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tinytots_parent/firebase_options.dart';
-import 'package:tinytots_parent/sceen/intro.dart';
+import 'package:tinytots_parent/screen/intro.dart';
 
 
 Future<void> main() async {

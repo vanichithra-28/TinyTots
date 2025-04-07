@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/intro.dart';
+import 'package:tinytots_parent/screen/intro.dart';
 
 class Signup extends StatefulWidget {
   const Signup({super.key});

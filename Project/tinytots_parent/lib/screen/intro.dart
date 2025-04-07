@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tinytots_parent/sceen/login.dart';
-import 'package:tinytots_parent/sceen/signup.dart';
+import 'package:tinytots_parent/screen/login.dart';
+import 'package:tinytots_parent/screen/signup.dart';
 
 class Intro extends StatefulWidget {
   const Intro({super.key});

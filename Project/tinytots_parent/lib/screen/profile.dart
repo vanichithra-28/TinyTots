@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/changepwd.dart';
-import 'package:tinytots_parent/sceen/edit.dart';
+import 'package:tinytots_parent/screen/changepwd.dart';
+import 'package:tinytots_parent/screen/edit.dart';
 
 class Profile extends StatefulWidget {
   const Profile({super.key, });

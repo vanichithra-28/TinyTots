@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
-import 'package:tinytots_parent/sceen/intro.dart';
+import 'package:tinytots_parent/screen/intro.dart';
 
 class Menu extends StatefulWidget {
   const Menu({super.key, });

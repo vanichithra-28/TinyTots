@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:tinytots_parent/sceen/activities.dart';
-import 'package:tinytots_parent/sceen/attendance.dart';
-import 'package:tinytots_parent/sceen/children.dart';
-import 'package:tinytots_parent/sceen/events.dart';
+import 'package:tinytots_parent/screen/activities.dart';
+import 'package:tinytots_parent/screen/attendance.dart';
+import 'package:tinytots_parent/screen/children.dart';
+import 'package:tinytots_parent/screen/events.dart';
 
 class DashboardContent extends StatelessWidget {
   const DashboardContent({super.key, });

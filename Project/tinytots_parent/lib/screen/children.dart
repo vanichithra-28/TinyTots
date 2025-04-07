@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/payment.dart';
+import 'package:tinytots_parent/screen/payment.dart';
 
 class Children extends StatefulWidget {
   const Children({super.key});

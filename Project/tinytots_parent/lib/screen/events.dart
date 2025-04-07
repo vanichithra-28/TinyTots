@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/event_participation.dart';
+import 'package:tinytots_parent/screen/event_participation.dart';
 
 class Events extends StatefulWidget {
   const Events({super.key});

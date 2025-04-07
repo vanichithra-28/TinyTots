@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:tinytots_parent/sceen/dashboard_content.dart';
-import 'package:tinytots_parent/sceen/menu.dart';
-import 'package:tinytots_parent/sceen/posts.dart';
-import 'package:tinytots_parent/sceen/profile.dart';
+import 'package:tinytots_parent/screen/dashboard_content.dart';
+import 'package:tinytots_parent/screen/menu.dart';
+import 'package:tinytots_parent/screen/posts.dart';
+import 'package:tinytots_parent/screen/profile.dart';
 
 import '../main.dart';
 

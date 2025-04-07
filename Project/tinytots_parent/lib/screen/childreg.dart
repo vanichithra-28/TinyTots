@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/account.dart';
+import 'package:tinytots_parent/screen/account.dart';
 import 'package:file_picker/file_picker.dart'; // Add this import
 
 class ChildRegistration extends StatefulWidget {

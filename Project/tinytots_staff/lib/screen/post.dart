@@ -130,7 +130,7 @@ class _PostState extends State<Post> {
                             color: Color(0xffffffff)
                       ),
                       child: _image == null
-                          ? const HugeIcon(
+                          ? HugeIcon(
                               icon: HugeIcons.strokeRoundedPlayListAdd,
                               color: Colors.black,
                               size: 70.0,

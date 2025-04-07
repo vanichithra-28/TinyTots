@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/childreg.dart';
-import 'package:tinytots_parent/sceen/dashboard.dart';
+import 'package:tinytots_parent/screen/childreg.dart';
+import 'package:tinytots_parent/screen/dashboard.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Account extends StatefulWidget {

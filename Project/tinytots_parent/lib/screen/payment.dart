@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:tinytots_parent/sceen/paymentwindow.dart';
+import 'package:tinytots_parent/screen/paymentwindow.dart';
 
 class Payment extends StatefulWidget {
    final int childId;

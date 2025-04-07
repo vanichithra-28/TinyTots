@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:lottie/lottie.dart';
 import 'package:tinytots_parent/main.dart';
-import 'package:tinytots_parent/sceen/account.dart';
+import 'package:tinytots_parent/screen/account.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:cherry_toast/cherry_toast.dart';
 
