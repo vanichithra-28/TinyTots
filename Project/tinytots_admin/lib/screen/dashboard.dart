@@ -31,7 +31,7 @@ class _DashboardState extends State<Dashboard> {
     Parent_child(),
     Classroom(),
     Events(),
-    Attendance_list(),
+    AttendanceList(),
     Fee_structure(),
     ManageMeals(),
   ];

@@ -15,12 +15,12 @@ class _AttendanceChildState extends State<AttendanceChild> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-         elevation: 0,
+        elevation: 0,
         backgroundColor: Colors.white,
         foregroundColor: Color(0xFFbc6c25),
         title: Text('Attendance'),
       ),
-       backgroundColor: Color(0xfff8f9fa),
+      backgroundColor: Color(0xfff8f9fa),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 50),
@@ -28,50 +28,55 @@ class _AttendanceChildState extends State<AttendanceChild> {
             children: [
               SizedBox(height: 20),
               GestureDetector(
-                onDoubleTap: () {
-                  Navigator.push(context,MaterialPageRoute(builder:(context) => Infant(),));
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Infant(),
+                      ));
                 },
-
-                child: Container( 
-                  height: 250,
+                child: Container(
+                    height: 200,
+                    width: 500,
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.all(Radius.circular(35)),
+                      color: Color(0xFFffffff),
+                    ),
+                    child: Text('Infants')),
+              ),
+              SizedBox(height: 20),
+              GestureDetector(
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => ToddlerAttendance(),
+                      ));
+                },
+                child: Container(
+                  height: 200,
                   width: 500,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all( Radius.circular(35)
-                    ),
-                    color: Color(0xFFffffff),
-                  ),
-                  
-                child: Text('Infants')
-                
-                ),
-              ), SizedBox(height: 20),
-             GestureDetector(
-              onDoubleTap: () {
-                                  Navigator.push(context,MaterialPageRoute(builder:(context) => ToddlerAttendance(),));
-
-              },
-               child: Container( 
-                  height: 250,
-                  width: 500,
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all( Radius.circular(35)
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(35)),
                     color: Color(0xFFffffff),
                   ),
                   child: Text('Toddlers'),
                 ),
-             ), SizedBox(height: 20),
+              ),
+              SizedBox(height: 20),
               GestureDetector(
-                onDoubleTap: () {
-                                                    Navigator.push(context,MaterialPageRoute(builder:(context) => PreschoolAttendance(),));
-
+                onTap: () {
+                  Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => PreschoolAttendance(),
+                      ));
                 },
-                child: Container( 
-                  height: 250,
+                child: Container(
+                  height: 200,
                   width: 500,
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.all( Radius.circular(35)
-                    ),
+                    borderRadius: BorderRadius.all(Radius.circular(35)),
                     color: Color(0xFFffffff),
                   ),
                   child: Text('Preschoolers'),

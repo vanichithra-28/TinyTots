@@ -4,7 +4,7 @@ import 'package:tinytots_parent/sceen/changepwd.dart';
 import 'package:tinytots_parent/sceen/edit.dart';
 
 class Profile extends StatefulWidget {
-  const Profile({super.key});
+  const Profile({super.key, });
 
   @override
   State<Profile> createState() => _ProfileState();

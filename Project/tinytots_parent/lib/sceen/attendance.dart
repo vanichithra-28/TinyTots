@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 class Attendance extends StatefulWidget {
@@ -19,12 +21,15 @@ class _AttendanceState extends State<Attendance> {
   }
 
   Future<void> fetchAttendance() async {
+    final prefs = await SharedPreferences.getInstance();
+    int? childId = prefs.getInt('child');
     final user = supabase.auth.currentUser;
-    if (user != null) {
+    if (user != null && childId != null) {
       final response = await supabase
           .from('tbl_attendance')
-          .select('*')
-          .eq('parent_id', user.id);
+          .select()
+          .eq('child_id', childId);
+
       setState(() {
         attendanceRecords = List<Map<String, dynamic>>.from(response);
       });
@@ -52,7 +57,18 @@ class _AttendanceState extends State<Attendance> {
                         final record = attendanceRecords[index];
                         return Card(
                           child: ListTile(
-                            title: Text(record['name']),
+                            title: Text(record['date'] ?? 'Unknown Date'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Check in: ${record['check_in'] != null ? DateFormat('hh:mm a').format(DateTime.parse(record['check_in'])) : 'N/A'}',
+                                ),
+                                Text(
+                                  'Check out: ${record['check_out'] != null ? DateFormat('hh:mm a').format(DateTime.parse(record['check_out'])) : 'N/A'}',
+                                ),
+                              ],
+                            ),
                           ),
                         );
                       },

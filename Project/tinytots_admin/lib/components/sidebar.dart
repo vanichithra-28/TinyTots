@@ -56,10 +56,11 @@ class _SideBarState extends State<SideBar> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
+                SizedBox(height: 10),
                 Image.asset(
-                  'assets/logo3.png',
-                  height: 50,
-                  width: 150,
+                  'assets/Logo.png',
+                  height: 45,
+                  width: 130,
                 ),
                 SizedBox(height: 10),
                 

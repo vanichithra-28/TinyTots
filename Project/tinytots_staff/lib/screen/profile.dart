@@ -27,7 +27,7 @@ class _ProfileState extends State<Profile> {
           .single();
       setState(() {
         staffData = response;
-        isLoading = false;
+        isLoading = true;
       });
     } catch (e) {
       isLoading = false;

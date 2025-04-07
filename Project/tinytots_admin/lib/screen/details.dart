@@ -13,10 +13,15 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   bool isLoading = true;
   Map<String, dynamic> studentData = {};
-  String formatDate(String timestamp) {
+  String formatDate(String? timestamp) {
+  if (timestamp == null || timestamp.isEmpty) return 'N/A'; // Handle null or empty timestamps
+  try {
     DateTime date = DateTime.parse(timestamp);
-    return DateFormat('dd-MM-yyyy').format(date); // Formats to YYYY-MM-DD
+    return DateFormat('dd-MM-yyyy').format(date); // Formats to DD-MM-YYYY
+  } catch (e) {
+    return 'Invalid Date'; // Handle invalid date formats
   }
+}
 
   Future<void> display() async {
     try {
@@ -67,9 +72,9 @@ class _DetailsState extends State<Details> {
       setState(() {
         isLoading = true;
       });
+     
       await supabase.from('tbl_child').update({
         'status': 2,
-        'doj': 'null',
       }).eq('id', widget.studentId);
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Rejected')),
@@ -118,7 +123,8 @@ class _DetailsState extends State<Details> {
                       SizedBox(height: 130),
                       CircleAvatar(
                         radius: 120,
-                        backgroundImage: NetworkImage(studentData['photo']?? "NA"),
+                        backgroundImage:
+                            NetworkImage(studentData['photo'] ?? "NA"),
                         backgroundColor: Colors.grey, // Placeholder background
                       ),
                     ],
@@ -130,51 +136,51 @@ class _DetailsState extends State<Details> {
                     children: [
                       SizedBox(height: 150),
                       Text(
-                       
-                       "Name: ${studentData['name'] ?? 'N/A'}",
+                        "Name: ${studentData['name'] ?? 'N/A'}",
                         style: TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
                       SizedBox(height: 10),
                       Text(
-                       "Age: ${studentData['age'] ?? 'N/A'}",
+                        "Age: ${studentData['age'] ?? 'N/A'} months",
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 10),
                       Text(
-                       "Gender: ${studentData['gender'] ?? 'N/A'}",
+                        "Gender: ${studentData['gender'] ?? 'N/A'}",
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 10),
                       Text(
-                        formatDate(
-                          studentData['dob'] ?? 'No dob',
-                        ),
+                        "DOB: ${studentData['dob'] ?? 'N/A'}",
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 10),
                       Text(
-                       "Documents: ${studentData['documents'] ?? 'N/A'}",
+                        "Documents: ${studentData['documents'] ?? 'N/A'}",
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 10),
                       Text(
-                     formatDate(   studentData['doj'].toString() ?? 'No doj',),
+                        studentData['doj'] != null
+                            ? formatDate(studentData['doj'].toString())
+                            : 'No doj',
                         style: TextStyle(
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       if (studentData['status'] == 0)
                         Padding(
                           padding:
-                              const EdgeInsets.only(left: 200.0, right: 190.0),
+                              const EdgeInsets.symmetric(horizontal: 20),
                           child: Row(
                             children: [
+                              SizedBox(width: 125),
                               Padding(
-                                padding: const EdgeInsets.all(20.0),
+                                padding: const EdgeInsets.all(10.0),
                                 child: Expanded(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(
@@ -194,7 +200,7 @@ class _DetailsState extends State<Details> {
                                 ),
                               ),
                               Padding(
-                                padding: const EdgeInsets.all(20.0),
+                                padding: const EdgeInsets.all(15.0),
                                 child: Expanded(
                                   child: ElevatedButton(
                                     style: ElevatedButton.styleFrom(

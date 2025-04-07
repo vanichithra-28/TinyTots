@@ -3,7 +3,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tinytots_parent/sceen/paymentwindow.dart';
 
 class Payment extends StatefulWidget {
-  const Payment({super.key});
+   final int childId;
+  const Payment({super.key, required this.childId});
 
   @override
   State<Payment> createState() => _PaymentState();
@@ -21,7 +22,7 @@ class _PaymentState extends State<Payment> {
 
   Future<void> display() async {
     try {
-      final response = await supabase.from('tbl_payment').select();
+      final response = await supabase.from('tbl_payment').select().eq('child_id', widget.childId);
       setState(() {
         _accounts = List<Map<String, dynamic>>.from(response);
       });
@@ -118,7 +119,7 @@ class _PaymentState extends State<Payment> {
                 onPressed: () {
                   Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Paymentwindow()),
+                    MaterialPageRoute(builder: (context) => Paymentwindow(childId: widget.childId,)),
                   );
                 },
                 style: ElevatedButton.styleFrom(

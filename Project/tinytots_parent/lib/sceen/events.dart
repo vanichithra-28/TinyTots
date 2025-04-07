@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
+import 'package:tinytots_parent/sceen/event_participation.dart';
 
 class Events extends StatefulWidget {
   const Events({super.key});
@@ -53,46 +54,51 @@ void initState() {
                 itemCount: _eventList.length,
                 itemBuilder: (context, index) {
                   final event = _eventList[index];
-                  return Card(
-                    color: Color(0xFFeceef0),
-                    child: Column(
-                      children: [
-                        Stack(
-                          children: [
-                            Container(
-                              height: 250,
-                              decoration: BoxDecoration(
-                                border:
-                                    Border.all(color: Color(0xffadc178), width: 2.5),
-                                image: DecorationImage(
-                                  image: NetworkImage(event['event_photo']),
-                                  fit: BoxFit.fill,
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => EventParticipation(eventId: event['id']),));
+                    },
+                    child: Card(
+                      color: Color(0xFFeceef0),
+                      child: Column(
+                        children: [
+                          Stack(
+                            children: [
+                              Container(
+                                height: 250,
+                                decoration: BoxDecoration(
+                                  border:
+                                      Border.all(color: Color(0xffadc178), width: 2.5),
+                                  image: DecorationImage(
+                                    image: NetworkImage(event['event_photo']),
+                                    fit: BoxFit.fill,
+                                  ),
                                 ),
                               ),
-                            ),
-                          ],
-                        ),
-                        SizedBox(height: 10),
-                        Row(
-                          children: [
-                            SizedBox(width: 15,),
-                            Expanded(
-                                child: Text(
-                              event['event_name'],
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                              ),
-                            )),
-                            Expanded(
-                                child: Text(
-                              event['event_date'],
-                              style: TextStyle(
-                                color: Color(0xff000000),
-                              ),
-                            )),
-                          ],
-                        )
-                      ],
+                            ],
+                          ),
+                          SizedBox(height: 10),
+                          Row(
+                            children: [
+                              SizedBox(width: 15,),
+                              Expanded(
+                                  child: Text(
+                                event['event_name'],
+                                style: TextStyle(
+                                  color: Color(0xff000000),
+                                ),
+                              )),
+                              Expanded(
+                                  child: Text(
+                                event['event_date'],
+                                style: TextStyle(
+                                  color: Color(0xff000000),
+                                ),
+                              )),
+                            ],
+                          )
+                        ],
+                      ),
                     ),
                   );
                 },

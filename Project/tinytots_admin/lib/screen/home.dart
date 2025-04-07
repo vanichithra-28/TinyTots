@@ -30,6 +30,7 @@ class _HomeState extends State<Home> {
                       Radius.circular(15),
                     ),
                   ),
+                  
                 ),
                 SizedBox(height: 10,),
                 Container(

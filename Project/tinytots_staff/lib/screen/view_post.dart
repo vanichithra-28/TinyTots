@@ -89,7 +89,31 @@ class _ViewpostState extends State<Viewpost> {
  Future<void> toggleLike(int postId, bool isLiked) async {
   try {
     final currentUserId = supabase.auth.currentUser?.id;
-    if (currentUserId == null) throw Exception('User not authenticated');
+    if (currentUserId == null) {
+      throw Exception('User not authenticated');
+    }
+
+    // Check if the post exists
+    final postExists = await supabase
+        .from('tbl_post')
+        .select('id')
+        .eq('id', postId)
+        .maybeSingle();
+    
+    if (postExists == null) {
+      throw Exception('Post does not exist');
+    }
+
+    // Check if the user exists in tbl_staff
+    final staffExists = await supabase
+        .from('tbl_staff')
+        .select('id')
+        .eq('id', currentUserId)
+        .maybeSingle();
+
+    if (staffExists == null) {
+      throw Exception('Staff does not exist');
+    }
 
     // Optimistic UI update
     setState(() {
@@ -103,14 +127,14 @@ class _ViewpostState extends State<Viewpost> {
 
     if (isLiked) {
       await supabase.from('tbl_like').delete().match({
-  'post_id': postId, 
-  'staff_id': currentUserId
-});
-
+        'post_id': postId,
+        'staff_id': currentUserId  // or 'parent_id' depending on your schema
+      });
     } else {
-      await supabase
-          .from('tbl_like')
-          .insert({'post_id': postId, 'staff_id': currentUserId});
+      await supabase.from('tbl_like').insert({
+        'post_id': postId,
+        'staff_id': currentUserId  // or 'parent_id' depending on your schema
+      });
     }
 
     // Wait a bit before refreshing data to avoid race conditions
@@ -127,7 +151,6 @@ class _ViewpostState extends State<Viewpost> {
     await fetchPosts();
   }
 }
-
 
 
   String getTimeAgo(String dateTime) {

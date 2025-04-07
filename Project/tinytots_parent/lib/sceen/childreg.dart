@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:intl/intl.dart';
 import 'package:tinytots_parent/main.dart';
 import 'package:tinytots_parent/sceen/account.dart';
 
@@ -17,18 +18,14 @@ class _ChildRegistrationState extends State<ChildRegistration> {
   final TextEditingController genderController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
   final TextEditingController docController = TextEditingController();
+    String _selectedFeeName = 'Full';
+
   File? _image;
   final ImagePicker _picker = ImagePicker();
-  String? selectedAge;
-    String? selGender;
 
-  final List<String> ageOptions = [
-    '6 months', '7 months', '8 months', '9 months', '10 months', '11 months',
-    '1 year', '1.5 years', '2 years', '2.5 years', '3 years', '3.5 years', '4 years', '4.5 years', '5 years'
-  ];
-  final List<String> genderOp= [
-    'Male','Female'
-  ];
+  String? selGender;
+
+  final List<String> genderOp = ['Male', 'Female'];
 
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
@@ -53,11 +50,12 @@ class _ChildRegistrationState extends State<ChildRegistration> {
       return null;
     }
   }
-   Future<void> _selectDate(BuildContext context) async {
+
+  Future<void> _selectDate(BuildContext context) async {
     DateTime? picked = await showDatePicker(
       context: context,
       initialDate: DateTime.now(),
-      firstDate: DateTime(2018),
+      firstDate: DateTime(2021),
       lastDate: DateTime.now(),
     );
 
@@ -67,17 +65,38 @@ class _ChildRegistrationState extends State<ChildRegistration> {
       });
     }
   }
+int calculateAgeInMonths(String dob) {
+  try {
+    DateTime birthDate = DateFormat("yyyy-MM-dd").parse(dob);
+    DateTime today = DateTime.now();
 
+    int years = today.year - birthDate.year;
+    int months = today.month - birthDate.month;
+
+    if (today.day < birthDate.day) {
+      months -= 1;
+    }
+    
+    return (years * 12) + months;
+  } catch (e) {
+    print("Error parsing date: $e");
+    return 0;
+  }
+}
   Future<void> insert() async {
     try {
+       int ageInMonths = calculateAgeInMonths(dobController.text.trim());
       await supabase.from('tbl_child').insert({
+           
+
         'name': nameController.text.trim(),
-        'age': selectedAge,
+        'age': ageInMonths,
         'gender': selGender,
         'dob': dobController.text.trim(),
         'documents': docController.text.trim(),
         'parent_id': supabase.auth.currentUser!.id,
         'photo': await uploadImage(),
+        'fee_type': _selectedFeeName,
       });
 
       ScaffoldMessenger.of(context).showSnackBar(
@@ -141,36 +160,35 @@ class _ChildRegistrationState extends State<ChildRegistration> {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
+                // SizedBox(
+                //   height: 10,
+                // ),
+                // DropdownButtonFormField<String>(
+                //   value: selectedAge,
+                //   hint: Text('Select Age'),
+                //   items: ageOptions.map((String age) {
+                //     return DropdownMenuItem<String>(
+                //       value: age,
+                //       child: Text(age),
+                //     );
+                //   }).toList(),
+                //   onChanged: (String? newValue) {
+                //     setState(() {
+                //       selectedAge = newValue;
+                //     });
+                //   },
+                //   decoration: InputDecoration(
+                //       border: OutlineInputBorder(
+                //           borderRadius: BorderRadius.circular(10))),
+                // ),
                 SizedBox(
                   height: 10,
                 ),
                 DropdownButtonFormField<String>(
-                  value: selectedAge,
-                  hint: Text('Select Age'),
-                  items: ageOptions.map((String age) {
-                    return DropdownMenuItem<String>(
-                      value: age,
-                      child: Text(age),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      selectedAge = newValue;
-                    });
-                  },
-                  decoration: InputDecoration(
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                 DropdownButtonFormField<String>(
                   value: selGender,
                   hint: Text('gender'),
                   items: genderOp.map((String gender) {
                     return DropdownMenuItem<String>(
-                      
                       value: gender,
                       child: Text(gender),
                     );
@@ -194,8 +212,8 @@ class _ChildRegistrationState extends State<ChildRegistration> {
                       labelText: 'DOB',
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
-                           readOnly: true,
-                    onTap: () => _selectDate(context),
+                  readOnly: true,
+                  onTap: () => _selectDate(context),
                 ),
                 SizedBox(
                   height: 10,
@@ -209,6 +227,25 @@ class _ChildRegistrationState extends State<ChildRegistration> {
                 ),
                 SizedBox(
                   height: 10,
+                ),
+                 const Text("Admission Fee Type"),
+                 Row(
+                  children: [
+                   
+                    for (var fee in ['Full', 'Half', 'Daily'])
+                      Row(
+                        children: [
+                          Radio(
+                            value: fee,
+                            groupValue: _selectedFeeName,
+                            onChanged: (value) {
+                              setState(() => _selectedFeeName = value.toString());
+                            },
+                          ),
+                          Text(fee),
+                        ],
+                      ),
+                  ],
                 ),
                 ElevatedButton(
                   onPressed: () {

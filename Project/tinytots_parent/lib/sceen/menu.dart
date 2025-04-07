@@ -3,7 +3,7 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:tinytots_parent/sceen/intro.dart';
 
 class Menu extends StatefulWidget {
-  const Menu({super.key});
+  const Menu({super.key, });
 
   @override
   State<Menu> createState() => _MenuState();

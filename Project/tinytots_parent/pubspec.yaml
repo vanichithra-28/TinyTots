@@ -16,6 +16,9 @@ dependencies:
   hugeicons: ^0.0.7
   intl: ^0.20.2
   lottie: ^2.6.0
+  shared_preferences: ^2.5.2
+  timeago: ^3.2.2
+  cached_network_image: ^3.4.1
 dev_dependencies:
   flutter_test:
     sdk: flutter

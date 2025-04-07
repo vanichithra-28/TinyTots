@@ -3,10 +3,9 @@ import 'package:tinytots_parent/sceen/activities.dart';
 import 'package:tinytots_parent/sceen/attendance.dart';
 import 'package:tinytots_parent/sceen/children.dart';
 import 'package:tinytots_parent/sceen/events.dart';
-import 'package:tinytots_parent/sceen/payment.dart';
 
 class DashboardContent extends StatelessWidget {
-  const DashboardContent({super.key});
+  const DashboardContent({super.key, });
 
   @override
   Widget build(BuildContext context) {

@@ -8,14 +8,17 @@ class Task extends StatefulWidget {
   State<Task> createState() => _TaskState();
 }
 
-class _TaskState extends State<Task> {
-  List<Map<String, dynamic>> tasks = [];
+class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
+  List<Map<String, dynamic>> completedTasks = [];
+  List<Map<String, dynamic>> pendingTasks = [];
   bool isLoading = true;
   String? errorMessage;
+  late TabController _tabController;
 
   @override
   void initState() {
     super.initState();
+    _tabController = TabController(length: 2, vsync: this);
     fetchTasks();
   }
 
@@ -42,7 +45,10 @@ class _TaskState extends State<Task> {
       }
 
       setState(() {
-        tasks = List<Map<String, dynamic>>.from(response);
+        completedTasks = List<Map<String, dynamic>>.from(
+            response.where((task) => task['status'] == 1));
+        pendingTasks = List<Map<String, dynamic>>.from(
+            response.where((task) => task['status'] == 0));
         isLoading = false;
       });
     } catch (e) {
@@ -57,7 +63,7 @@ class _TaskState extends State<Task> {
     try {
       await Supabase.instance.client
           .from('tbl_task')
-          .update({'status': isCompleted ? 1:0})
+          .update({'status': isCompleted ? 1 : 0})
           .match({'id': taskId});
       fetchTasks();
     } catch (e) {
@@ -67,55 +73,56 @@ class _TaskState extends State<Task> {
     }
   }
 
+  Widget buildTaskList(List<Map<String, dynamic>> tasks) {
+    return tasks.isEmpty
+        ? const Center(child: Text('No tasks found'))
+        : ListView.builder(
+            itemCount: tasks.length,
+            itemBuilder: (context, index) {
+              final task = tasks[index];
+              bool isCompleted = task['status'] == 1;
+              return Card(
+                child: ListTile(
+                  title: Text(task['task'] ?? 'N/A'),
+                  subtitle: Text("End Date: ${task['end_date'] ?? 'N/A'}"),
+                  trailing: Checkbox(
+                    value: isCompleted,
+                    onChanged: (bool? value) {
+                      if (value != null) {
+                        updateTaskStatus(task['id'], value);
+                      }
+                    },
+                  ),
+                ),
+              );
+            },
+          );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: const Color(0xFFbc6c25),
-        title: const Text('Task'),
-      ),
       backgroundColor: const Color(0xfff8f9fa),
+      appBar: AppBar(
+        title: const Text("Tasks"),
+        bottom: TabBar(
+          controller: _tabController,
+          tabs: const [
+            Tab(text: "Pending"),
+            Tab(text: "Completed"),
+          ],
+        ),
+      ),
       body: isLoading
           ? const Center(child: CircularProgressIndicator())
           : errorMessage != null
               ? Center(child: Text(errorMessage!))
-              : SingleChildScrollView(
-                  scrollDirection: Axis.horizontal,
-                  child: DataTable(
-                    columnSpacing: 20,
-                    columns: const [
-                      DataColumn(label: Text('Task Name')),
-                      DataColumn(label: Text('Description')),
-                      DataColumn(label: Text('Action')),
-                      DataColumn(label: Text('Status')),
-                    ],
-                    rows: tasks.map((task) {
-                      bool isCompleted = task['status'] == 'Completed';
-                      return DataRow(cells: [
-                        DataCell(Text(task['task'] ?? 'N/A')),
-                        DataCell(Text(task['end_date'] ?? 'N/A')),
-                        DataCell(Checkbox(
-                          value: isCompleted,
-                          onChanged: (bool? value) {
-                            if (value != null) {
-                              updateTaskStatus(task['id'], value);
-                            }
-                          },
-                        )),
-                        DataCell(task['status'] == 1
-                          ? Text(
-                              'Completed',
-                              style: TextStyle(color: Colors.green),
-                            )
-                          : Text(
-                             'Pending',
-                              style: TextStyle(color: Colors.red),
-                            )),
-                      ]);
-                    }).toList(),
-                  ),
+              : TabBarView(
+                  controller: _tabController,
+                  children: [
+                    buildTaskList(pendingTasks),
+                    buildTaskList(completedTasks),
+                  ],
                 ),
     );
   }

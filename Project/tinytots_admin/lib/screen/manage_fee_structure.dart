@@ -16,20 +16,26 @@ class _Fee_structureState extends State<Fee_structure>
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final TextEditingController amountController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
-  final TextEditingController feenameController = TextEditingController();
+  String _selectedFeeName = 'Full';
   List<Map<String, dynamic>> _feesList = [];
   int _editId = 0;
   Future<void> feeSubmit() async {
+    if (_feesList.length >= 3) {
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text("Maximum of 3 fee entries allowed."),
+        backgroundColor: Colors.red,
+      ));
+      return;
+    }
     try {
       String amount = amountController.text;
       String details = detailsController.text;
-      String feename = feenameController.text;
+      String feename = _selectedFeeName;
       await supabase.from('tbl_fees').insert(
           {'fee_amount': amount, 'fee_details': details, 'fee_name': feename});
       fetchFees();
       amountController.clear();
       detailsController.clear();
-      feenameController.clear();
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text("Inserted"),
       ));
@@ -71,12 +77,12 @@ class _Fee_structureState extends State<Fee_structure>
       await supabase.from('tbl_fees').update({
         'fee_amount': amountController.text,
         'fee_details': detailsController.text,
-        'fee_name': feenameController.text
+        'fee_name': _selectedFeeName,
       }).eq('id', _editId);
       fetchFees();
       amountController.clear;
       detailsController.clear;
-      feenameController.clear;
+      
       _editId = 0;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
@@ -168,15 +174,24 @@ class _Fee_structureState extends State<Fee_structure>
                             SizedBox(
                               width: 10,
                             ),
-                            Expanded(
-                                child: TextFormField(
-                              controller: feenameController,
-                              decoration: InputDecoration(
-                                labelText: 'Fee Name',
-                                border: UnderlineInputBorder(
-                                    borderRadius: BorderRadius.zero),
-                              ),
-                            )),
+                            Row(
+                  children: [
+                    const Text("Fee Name: "),
+                    for (var fee in ['Full', 'Half', 'Daily'])
+                      Row(
+                        children: [
+                          Radio(
+                            value: fee,
+                            groupValue: _selectedFeeName,
+                            onChanged: (value) {
+                              setState(() => _selectedFeeName = value.toString());
+                            },
+                          ),
+                          Text(fee),
+                        ],
+                      ),
+                  ],
+                ),
                             SizedBox(
                               width: 10,
                             ),
@@ -272,7 +287,6 @@ class _Fee_structureState extends State<Fee_structure>
                             _editId = entry.value['id'];
                             amountController.text = entry.value['fee_amount'];
                             detailsController.text = entry.value['fee_details'];
-                            feenameController.text = entry.value['fee_name'];
                             _isFormVisible = true;
                           });
                         },
