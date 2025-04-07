@@ -5,6 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tinytots_parent/main.dart';
 import 'package:tinytots_parent/sceen/account.dart';
+import 'package:file_picker/file_picker.dart'; // Add this import
 
 class ChildRegistration extends StatefulWidget {
   const ChildRegistration({super.key});
@@ -17,16 +18,16 @@ class _ChildRegistrationState extends State<ChildRegistration> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController genderController = TextEditingController();
   final TextEditingController dobController = TextEditingController();
-  final TextEditingController docController = TextEditingController();
-    String _selectedFeeName = 'Full';
+  String _selectedFeeName = 'Full';
 
-  File? _image;
+  File? _image; // For the photo
+  File? _document; // For the document
   final ImagePicker _picker = ImagePicker();
 
   String? selGender;
-
   final List<String> genderOp = ['Male', 'Female'];
 
+  // Pick image for the photo
   Future<void> _pickImage() async {
     final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
@@ -36,14 +37,44 @@ class _ChildRegistrationState extends State<ChildRegistration> {
     }
   }
 
+  // Pick file for the document
+  Future<void> _pickDocument() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'png'], // Adjust allowed file types
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _document = File(result.files.single.path!);
+      });
+    }
+  }
+
+  // Upload image to Supabase storage
   Future<String?> uploadImage() async {
-    print("Image:$_image");
+    print("Image: $_image");
     if (_image == null) return null;
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'child-photo-$timestamp';
       final filePath = '$fileName';
       await supabase.storage.from('child').upload(fileName, _image!);
+      return supabase.storage.from('child').getPublicUrl(fileName);
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
+  }
+
+  // Upload document to Supabase storage
+  Future<String?> uploadDocument() async {
+    print("Document: $_document");
+    if (_document == null) return null;
+    try {
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = 'child-document-$timestamp.${_document!.path.split('.').last}';
+      final filePath = '$fileName';
+      await supabase.storage.from('child').upload(fileName, _document!);
       return supabase.storage.from('child').getPublicUrl(fileName);
     } catch (e) {
       print('Upload error: $e');
@@ -65,35 +96,35 @@ class _ChildRegistrationState extends State<ChildRegistration> {
       });
     }
   }
-int calculateAgeInMonths(String dob) {
-  try {
-    DateTime birthDate = DateFormat("yyyy-MM-dd").parse(dob);
-    DateTime today = DateTime.now();
 
-    int years = today.year - birthDate.year;
-    int months = today.month - birthDate.month;
+  int calculateAgeInMonths(String dob) {
+    try {
+      DateTime birthDate = DateFormat("yyyy-MM-dd").parse(dob);
+      DateTime today = DateTime.now();
 
-    if (today.day < birthDate.day) {
-      months -= 1;
+      int years = today.year - birthDate.year;
+      int months = today.month - birthDate.month;
+
+      if (today.day < birthDate.day) {
+        months -= 1;
+      }
+
+      return (years * 12) + months;
+    } catch (e) {
+      print("Error parsing date: $e");
+      return 0;
     }
-    
-    return (years * 12) + months;
-  } catch (e) {
-    print("Error parsing date: $e");
-    return 0;
   }
-}
+
   Future<void> insert() async {
     try {
-       int ageInMonths = calculateAgeInMonths(dobController.text.trim());
+      int ageInMonths = calculateAgeInMonths(dobController.text.trim());
       await supabase.from('tbl_child').insert({
-           
-
         'name': nameController.text.trim(),
         'age': ageInMonths,
         'gender': selGender,
         'dob': dobController.text.trim(),
-        'documents': docController.text.trim(),
+        'documents': await uploadDocument(), // Use uploaded document URL
         'parent_id': supabase.auth.currentUser!.id,
         'photo': await uploadImage(),
         'fee_type': _selectedFeeName,
@@ -107,7 +138,7 @@ int calculateAgeInMonths(String dob) {
         MaterialPageRoute(builder: (context) => Account()),
       );
     } catch (e) {
-      print('ERROR REGISTERING CHILD$e');
+      print('ERROR REGISTERING CHILD $e');
     }
   }
 
@@ -153,6 +184,7 @@ int calculateAgeInMonths(String dob) {
                     ),
                   ),
                 ),
+                SizedBox(height: 10),
                 TextFormField(
                   controller: nameController,
                   decoration: InputDecoration(
@@ -160,33 +192,10 @@ int calculateAgeInMonths(String dob) {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
-                // SizedBox(
-                //   height: 10,
-                // ),
-                // DropdownButtonFormField<String>(
-                //   value: selectedAge,
-                //   hint: Text('Select Age'),
-                //   items: ageOptions.map((String age) {
-                //     return DropdownMenuItem<String>(
-                //       value: age,
-                //       child: Text(age),
-                //     );
-                //   }).toList(),
-                //   onChanged: (String? newValue) {
-                //     setState(() {
-                //       selectedAge = newValue;
-                //     });
-                //   },
-                //   decoration: InputDecoration(
-                //       border: OutlineInputBorder(
-                //           borderRadius: BorderRadius.circular(10))),
-                // ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 DropdownButtonFormField<String>(
                   value: selGender,
-                  hint: Text('gender'),
+                  hint: Text('Gender'),
                   items: genderOp.map((String gender) {
                     return DropdownMenuItem<String>(
                       value: gender,
@@ -202,9 +211,7 @@ int calculateAgeInMonths(String dob) {
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10))),
                 ),
-                SizedBox(
-                  height: 10,
-                ),
+                SizedBox(height: 10),
                 TextFormField(
                   controller: dobController,
                   keyboardType: TextInputType.name,
@@ -215,23 +222,37 @@ int calculateAgeInMonths(String dob) {
                   readOnly: true,
                   onTap: () => _selectDate(context),
                 ),
-                SizedBox(
-                  height: 10,
+                SizedBox(height: 10),
+                // Document picker button
+                GestureDetector(
+                  onTap: _pickDocument,
+                  child: Container(
+                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.grey),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          _document == null
+                              ? 'Select Document'
+                              : 'Document: ${_document!.path.split('/').last}',
+                          style: TextStyle(
+                              color: _document == null
+                                  ? Colors.grey
+                                  : Colors.black),
+                        ),
+                        Icon(Icons.attach_file, color: Colors.grey),
+                      ],
+                    ),
+                  ),
                 ),
-                TextFormField(
-                  controller: docController,
-                  decoration: InputDecoration(
-                      labelText: 'Document',
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                 const Text("Admission Fee Type"),
-                 Row(
+                SizedBox(height: 10),
+                const Text("Admission Fee Type"),
+                Row(
                   children: [
-                   
                     for (var fee in ['Full', 'Half', 'Daily'])
                       Row(
                         children: [
@@ -247,11 +268,25 @@ int calculateAgeInMonths(String dob) {
                       ),
                   ],
                 ),
+                SizedBox(height: 10),
                 ElevatedButton(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFbc6c25),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 10),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
                   onPressed: () {
                     insert();
                   },
-                  child: Text('Register Child'),
+                  child: Text(
+                    'Register Child',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Color(0xfff8f9fa),
+                    ),
+                  ),
                 ),
               ],
             ),

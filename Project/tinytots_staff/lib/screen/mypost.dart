@@ -15,22 +15,26 @@ class _MypostState extends State<Mypost> {
   bool _isLoading = true;
 
   Future<void> delete(int delId) async {
-    try {
-      await supabase.from('tbl_post').delete().eq('id', delId);
-      await display();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text(
-            'Post deleted',
-            style: TextStyle(color: Colors.white),
-          ),
-          backgroundColor: Colors.black54,
+  try {
+    await supabase.from('tbl_like').delete().eq('post_id', delId);
+
+    await supabase.from('tbl_post').delete().eq('id', delId);
+
+    await display();
+
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text(
+          'Post deleted',
+          style: TextStyle(color: Colors.white),
         ),
-      );
-    } catch (e) {
-      print('ERROR DELETING POST $e');
-    }
+        backgroundColor: Colors.black54,
+      ),
+    );
+  } catch (e) {
+    print('ERROR DELETING POST $e');
   }
+}
 
   Future<void> display() async {
     try {
