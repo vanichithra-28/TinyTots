@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tinytots_admin/main.dart';
+import 'package:url_launcher/url_launcher.dart'; // Added for opening files
 
 class Details extends StatefulWidget {
   final int studentId;
@@ -13,15 +14,16 @@ class Details extends StatefulWidget {
 class _DetailsState extends State<Details> {
   bool isLoading = true;
   Map<String, dynamic> studentData = {};
+
   String formatDate(String? timestamp) {
-  if (timestamp == null || timestamp.isEmpty) return 'N/A'; // Handle null or empty timestamps
-  try {
-    DateTime date = DateTime.parse(timestamp);
-    return DateFormat('dd-MM-yyyy').format(date); // Formats to DD-MM-YYYY
-  } catch (e) {
-    return 'Invalid Date'; // Handle invalid date formats
+    if (timestamp == null || timestamp.isEmpty) return 'N/A'; // Handle null or empty timestamps
+    try {
+      DateTime date = DateTime.parse(timestamp);
+      return DateFormat('dd-MM-yyyy').format(date); // Formats to DD-MM-YYYY
+    } catch (e) {
+      return 'Invalid Date'; // Handle invalid date formats
+    }
   }
-}
 
   Future<void> display() async {
     try {
@@ -72,7 +74,7 @@ class _DetailsState extends State<Details> {
       setState(() {
         isLoading = true;
       });
-     
+
       await supabase.from('tbl_child').update({
         'status': 2,
       }).eq('id', widget.studentId);
@@ -89,6 +91,121 @@ class _DetailsState extends State<Details> {
   void initState() {
     super.initState();
     display();
+  }
+
+  // New method to build the document display widget
+  Widget buildDocumentDisplay() {
+    final String? documentUrl = studentData['documents'];
+
+    if (documentUrl == null || documentUrl == 'N/A') {
+      return Text(
+        "Documents: N/A",
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+      );
+    }
+
+    final String extension = documentUrl.split('.').last.toLowerCase();
+    final bool isImage = ['jpg', 'jpeg', 'png', 'gif'].contains(extension);
+    final bool isPdf = extension == 'pdf';
+
+    if (isImage) {
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            "Documents:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+          ),
+          SizedBox(height: 5),
+          Image.network(
+            documentUrl,
+            height: 100,
+            width: 100,
+            fit: BoxFit.cover,
+            errorBuilder: (context, error, stackTrace) {
+              return Text(
+                "Error loading image",
+                style: TextStyle(fontSize: 15, color: Colors.red),
+              );
+            },
+          ),
+        ],
+      );
+    } else if (isPdf) {
+      return Padding(
+        padding: const EdgeInsets.only(left: 200.0),
+        child: Row(
+          children: [
+            Text(
+              "Documents:",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(width: 5),
+            GestureDetector(
+              onTap: () async {
+                final Uri uri = Uri.parse(documentUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Cannot open document")),
+                  );
+                }
+              },
+              child: Row(
+                children: [
+                  Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
+                  SizedBox(width: 5),
+                  Text(
+                    "View PDF",
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.blue,
+                      decoration: TextDecoration.underline,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    } else {
+      return Padding(
+        padding: const EdgeInsets.only(left: 200.0),
+        child: Row(
+          children: [
+            Text(
+              "Documents:",
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
+            ),
+            SizedBox(width: 5),
+            GestureDetector(
+              onTap: () async {
+                final Uri uri = Uri.parse(documentUrl);
+                if (await canLaunchUrl(uri)) {
+                  await launchUrl(uri, mode: LaunchMode.externalApplication);
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(content: Text("Cannot open document")),
+                  );
+                }
+              },
+              child: Text(
+                "Open File",
+                style: TextStyle(
+                  fontSize: 15,
+                  fontWeight: FontWeight.w500,
+                  color: Colors.blue,
+                  decoration: TextDecoration.underline,
+                ),
+              ),
+            ),
+          ],
+        ),
+      );
+    }
   }
 
   @override
@@ -108,11 +225,10 @@ class _DetailsState extends State<Details> {
             width: 800,
             height: 600,
             decoration: BoxDecoration(
-              color: Color(0xffffffff), // Background color of the container
-              // Rounded corners
+              color: Color(0xffffffff),
               border: Border.all(
-                color: Color(0xFFeceef0), // Border color
-                width: 2, // Border width
+                color: Color(0xFFeceef0),
+                width: 2,
               ),
             ),
             child: Row(
@@ -125,7 +241,7 @@ class _DetailsState extends State<Details> {
                         radius: 120,
                         backgroundImage:
                             NetworkImage(studentData['photo'] ?? "NA"),
-                        backgroundColor: Colors.grey, // Placeholder background
+                        backgroundColor: Colors.grey,
                       ),
                     ],
                   ),
@@ -159,11 +275,7 @@ class _DetailsState extends State<Details> {
                             fontSize: 15, fontWeight: FontWeight.w500),
                       ),
                       SizedBox(height: 10),
-                      Text(
-                        "Documents: ${studentData['documents'] ?? 'N/A'}",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
+                      buildDocumentDisplay(), // Replaced the original Text widget
                       SizedBox(height: 10),
                       Text(
                         studentData['doj'] != null

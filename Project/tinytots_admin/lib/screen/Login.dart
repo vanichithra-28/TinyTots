@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
+import 'package:lottie/lottie.dart';
 import 'package:tinytots_admin/main.dart';
 import 'package:tinytots_admin/screen/dashboard.dart';
 import 'package:cherry_toast/resources/arrays.dart';
 import 'package:cherry_toast/cherry_toast.dart';
+
 class Login extends StatefulWidget {
   const Login({super.key});
 
@@ -14,17 +17,15 @@ class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
 
-  
-   Future<void> signin() async {
+  Future<void> signin() async {
     try {
       await supabase.auth.signInWithPassword(
-  email: emailController.text.trim(),
-  password:passwordController.text.trim(),
-);
-   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => Dashboard())); 
-  
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      Navigator.pushReplacement(
+          context, MaterialPageRoute(builder: (context) => Dashboard()));
     } catch (e) {
-       
       print('ERROR: $e');
       CherryToast.error(
               description: Text("No user found for that email.",
@@ -36,6 +37,7 @@ class _LoginState extends State<Login> {
       print('No user found for that email.');
     }
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,37 +52,32 @@ class _LoginState extends State<Login> {
                 child: Container(
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(15),
-                        bottomLeft: Radius.circular(15)),
-                    color: Color(0xffFFC1CC),
+                      topLeft: Radius.circular(15),
+                      bottomLeft: Radius.circular(15),
+                    ),
+                    color: Color(0xffF8F8FF),
                   ),
                   height: 550,
-                  child: Stack(children: [
-                    Align(
-                      alignment: Alignment.bottomLeft,
-                      child: Image.asset(
-                        'assets/baloon.png',
-                        height: 300,
-                        width: 150,
+                  child: Stack(
+                    children: [
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Image.asset(
+                          'assets/l1.png', 
+                          height: 150,
+                          width: 200,
+                        ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.bottomRight,
-                      child: Image.asset(
-                        'assets/watercolor.png',
-                        height: 250,
-                        width: 300,
+                      Align(
+                        alignment: Alignment.center,
+                        child: Lottie.asset(
+                          'assets/admin.json', 
+                          height: 350,
+                          width: 350,
+                        ),
                       ),
-                    ),
-                    Align(
-                      alignment: Alignment.topCenter,
-                      child: Image.asset(
-                        'assets/logo3.png',
-                        height: 250,
-                        width: 250,
-                      ),
-                    ),
-                  ]),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -104,11 +101,11 @@ class _LoginState extends State<Login> {
                       Padding(
                         padding: EdgeInsets.only(top: 120),
                         child: Text(
-                          'Welcome Back',
+                          'Login',
                           style: TextStyle(
                             fontSize: 20,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff03045e),
+                            color: Color(0xff3e53a0),
                           ),
                         ),
                       ),
@@ -130,6 +127,7 @@ class _LoginState extends State<Login> {
                         padding: EdgeInsets.only(left: 60, right: 90),
                         child: TextFormField(
                           controller: passwordController,
+                          obscureText: true,
                           decoration: InputDecoration(
                               labelText: 'Password',
                               border: OutlineInputBorder(
@@ -142,12 +140,15 @@ class _LoginState extends State<Login> {
                         onPressed: () {
                           signin();
                         },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff3e53a0),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(4)),
+                        ),
                         child: Text(
                           'LOGIN',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
-                        style: ElevatedButton.styleFrom(
-                            backgroundColor: Color(0xff03045e)),
                       ),
                     ],
                   ),

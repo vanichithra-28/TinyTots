@@ -29,7 +29,13 @@ class _ChildActivityState extends State<ChildActivity> {
   int calculateAgeInMonths(String dob) {
     DateTime birthDate = DateTime.parse(dob);
     DateTime today = DateTime.now();
-    int months = (today.year - birthDate.year) * 12 + today.month - birthDate.month;
+    int months =
+        (today.year - birthDate.year) * 12 + today.month - birthDate.month;
+
+    if (today.day < birthDate.day) {
+      months--;
+    }
+
     return months;
   }
 

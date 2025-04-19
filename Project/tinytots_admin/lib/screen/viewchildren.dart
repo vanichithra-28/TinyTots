@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:tinytots_admin/main.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class Viewchildren extends StatefulWidget {
   final String parentId;
@@ -12,15 +13,16 @@ class Viewchildren extends StatefulWidget {
 
 class _ViewchildrenState extends State<Viewchildren> {
   List<Map<String, dynamic>> _childList = [];
-  bool _isLoading = true; // Show loading indicator
-  String? _errorMessage; // Handle errors
+  bool _isLoading = true;
+  String? _errorMessage;
 
   Future<void> display() async {
     try {
       final response = await supabase
           .from('tbl_child')
-          .select().eq('status', 1)
-          .eq('parent_id', widget.parentId,);
+          .select()
+          .eq('status', 1)
+          .eq('parent_id', widget.parentId);
 
       setState(() {
         _childList = response;
@@ -75,31 +77,58 @@ class _ViewchildrenState extends State<Viewchildren> {
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff8b8c89)))),
+                                    color: Color(0xff252422)))),
                         DataColumn(
                             label: Text('DOB',
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff8b8c89)))),
+                                    color: Color(0xff252422)))),
                         DataColumn(
                             label: Text('Documents',
                                 style: TextStyle(
                                     fontSize: 16,
                                     fontWeight: FontWeight.bold,
-                                    color: Color(0xff8b8c89)))),
+                                    color: Color(0xff252422)))),
                       ],
                       rows: _childList.asMap().entries.map((entry) {
+                        final docUrl = entry.value['documents'];
+                        final isImage = docUrl != null &&
+                            (docUrl.endsWith('.jpg') ||
+                                docUrl.endsWith('.jpeg') ||
+                                docUrl.endsWith('.png'));
+
                         return DataRow(cells: [
                           DataCell(Text(entry.value['name'] ?? 'N/A',
-                              style:
-                                  TextStyle(fontSize: 16, color: Color(0xff8b8c89)))),
+                              style: TextStyle(
+                                  fontSize: 16, color: Color(0xff252422)))),
                           DataCell(Text(formatDate(entry.value['dob']),
-                              style:
-                                  TextStyle(fontSize: 16, color: Color(0xff8b8c89)))),
-                          DataCell(Text(entry.value['documents'] ?? 'No documents',
-                              style:
-                                  TextStyle(fontSize: 16, color: Color(0xff8b8c89)))),
+                              style: TextStyle(
+                                  fontSize: 16, color: Color(0xff252422)))),
+                          DataCell(docUrl == null || docUrl.isEmpty
+                              ? Text('No documents',
+                                  style: TextStyle(
+                                      fontSize: 16,
+                                      color: Color(0xff252422)))
+                              : isImage
+                                  ? Image.network(
+                                      docUrl,
+                                      height: 50,
+                                      width: 50,
+                                      errorBuilder: (context, error, stackTrace) =>
+                                          Icon(Icons.broken_image,
+                                              color: Colors.red),
+                                    )
+                                  : IconButton(
+                                      icon: Icon(Icons.insert_drive_file,
+                                          color: Color.fromARGB(255, 228, 6, 6)),
+                                      onPressed: () async {
+                                        if (await canLaunchUrl(Uri.parse(docUrl))) {
+                                          await launchUrl(Uri.parse(docUrl),
+                                              mode: LaunchMode.externalApplication);
+                                        }
+                                      },
+                                    )),
                         ]);
                       }).toList(),
                     ),

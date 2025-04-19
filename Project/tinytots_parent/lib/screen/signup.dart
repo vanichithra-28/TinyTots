@@ -3,6 +3,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:tinytots_parent/main.dart';
 import 'package:tinytots_parent/screen/intro.dart';
+import 'package:file_picker/file_picker.dart'; // Added for file picking
 
 class Signup extends StatefulWidget {
   const Signup({super.key});
@@ -17,8 +18,8 @@ class _SignupState extends State<Signup> {
   final TextEditingController passwordController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
-  final TextEditingController proofController = TextEditingController();
   File? _image;
+  File? _proof; // Added for proof file
   final ImagePicker _picker = ImagePicker();
 
   Future<void> _pickImage() async {
@@ -26,6 +27,19 @@ class _SignupState extends State<Signup> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+      });
+    }
+  }
+
+  // Pick file for proof
+  Future<void> _pickProof() async {
+    FilePickerResult? result = await FilePicker.platform.pickFiles(
+      type: FileType.custom,
+      allowedExtensions: ['pdf', 'jpg', 'png'], // Adjust allowed file types as needed
+    );
+    if (result != null && result.files.single.path != null) {
+      setState(() {
+        _proof = File(result.files.single.path!);
       });
     }
   }
@@ -46,12 +60,17 @@ class _SignupState extends State<Signup> {
         imageUrl = await uploadImage();
       }
 
+      String? proofUrl;
+      if (_proof != null) {
+        proofUrl = await uploadProof();
+      }
+
       await supabase.from('tbl_parent').insert({
         'id': uid,
         'parent_name': nameController.text.trim(),
         'parent_contact': contactController.text.trim(),
         'parent_address': addressController.text.trim(),
-        'parent_proof': proofController.text.trim(),
+        'parent_proof': proofUrl, // Use uploaded proof URL instead of text
         'parent_photo': imageUrl,
         'parent_email': emailController.text.trim(),
         'parent_pwd': passwordController.text.trim(),
@@ -74,17 +93,30 @@ class _SignupState extends State<Signup> {
   Future<String?> uploadImage() async {
     if (_image == null) return null;
     try {
-      final uid = supabase.auth.currentUser!.id;
+      final uid = supabase.auth.currentUser?.id ?? 'unknown';
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = '$uid-photo-$timestamp';
 
-      await supabase.storage
-          .from('parent')
-          .upload(fileName, _image!);
+      await supabase.storage.from('parent').upload(fileName, _image!);
 
-      return supabase.storage
-          .from('parent')
-          .getPublicUrl(fileName);
+      return supabase.storage.from('parent').getPublicUrl(fileName);
+    } catch (e) {
+      print('Upload error: $e');
+      return null;
+    }
+  }
+
+  // Upload proof to Supabase storage (proof bucket)
+  Future<String?> uploadProof() async {
+    if (_proof == null) return null;
+    try {
+      final uid = supabase.auth.currentUser?.id ?? 'unknown';
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = '$uid-proof-$timestamp.${_proof!.path.split('.').last}';
+
+      await supabase.storage.from('proof').upload(fileName, _proof!);
+
+      return supabase.storage.from('proof').getPublicUrl(fileName);
     } catch (e) {
       print('Upload error: $e');
       return null;
@@ -100,7 +132,7 @@ class _SignupState extends State<Signup> {
       ),
       body: Form(
         child: Padding(
-          padding: const EdgeInsets.only(bottom: 10.0),
+          padding: const EdgeInsets.only(top: 10.0),
           child: SingleChildScrollView(
             child: Container(
               height: 650,
@@ -125,12 +157,16 @@ class _SignupState extends State<Signup> {
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: register,
-                    child: const Text('SIGNUP',style: TextStyle(color: Color(0xfff8f9fa)),),
+                    child: const Text(
+                      'SIGNUP',
+                      style: TextStyle(color: Color(0xfff8f9fa)),
+                    ),
                     style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFbc6c25),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4))),
-              
+                      backgroundColor: Color(0xFFbc6c25),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
                   ),
                 ],
               ),
@@ -148,22 +184,55 @@ class _SignupState extends State<Signup> {
       {'controller': passwordController, 'label': 'Password'},
       {'controller': contactController, 'label': 'Contact'},
       {'controller': addressController, 'label': 'Address'},
-      {'controller': proofController, 'label': 'Proof'},
     ];
 
-    return fields.map((field) {
-      return Padding(
-        padding: const EdgeInsets.only(bottom: 10.0),
-        child: TextFormField(
-          controller: field['controller'] as TextEditingController,
-          decoration: InputDecoration(
-            labelText: field['label'] as String,
-            border: OutlineInputBorder(
+    return [
+      ...fields.map((field) {
+        return Padding(
+          padding: const EdgeInsets.only(top: 10.0),
+          child: TextFormField(
+            controller: field['controller'] as TextEditingController,
+            decoration: InputDecoration(
+              labelText: field['label'] as String,
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+              ),
+            ),
+          ),
+        );
+      }).toList(),
+      // Add the proof file picker widget separately
+      Padding(
+        padding: const EdgeInsets.only(top: 10.0),
+        child: GestureDetector(
+          onTap: _pickProof,
+          child: Container(
+            padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+            decoration: BoxDecoration(
+              border: Border.all(color: Colors.grey),
               borderRadius: BorderRadius.circular(10),
+            ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Text(
+                    _proof == null
+                        ? 'Select Proof'
+                        : 'Proof: ${_proof!.path.split('/').last}',
+                    style: TextStyle(
+                      color: _proof == null ? Colors.grey : Colors.black,
+                    ),
+                    overflow: TextOverflow.ellipsis,
+                    maxLines: 1,
+                  ),
+                ),
+                Icon(Icons.attach_file, color: Colors.grey),
+              ],
             ),
           ),
         ),
-      );
-    }).toList();
+      ),
+    ];
   }
 }

@@ -56,7 +56,7 @@ class _ChildrenState extends State<Children> {
       
       // Refresh the display after update
       await display();
-      allergyController.clear();
+      // allergyController.clear();
 
       
       ScaffoldMessenger.of(context).showSnackBar(

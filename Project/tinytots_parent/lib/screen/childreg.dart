@@ -5,7 +5,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:tinytots_parent/main.dart';
 import 'package:tinytots_parent/screen/account.dart';
-import 'package:file_picker/file_picker.dart'; // Add this import
+import 'package:file_picker/file_picker.dart'; 
 
 class ChildRegistration extends StatefulWidget {
   const ChildRegistration({super.key});
@@ -41,7 +41,7 @@ class _ChildRegistrationState extends State<ChildRegistration> {
   Future<void> _pickDocument() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
-      allowedExtensions: ['pdf', 'jpg', 'png'], // Adjust allowed file types
+      allowedExtensions: ['pdf', 'jpg', 'png','doc','docx','pdf'], 
     );
     if (result != null && result.files.single.path != null) {
       setState(() {
@@ -50,14 +50,13 @@ class _ChildRegistrationState extends State<ChildRegistration> {
     }
   }
 
-  // Upload image to Supabase storage
+  // Upload image to Supabase storage (child bucket)
   Future<String?> uploadImage() async {
     print("Image: $_image");
     if (_image == null) return null;
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'child-photo-$timestamp';
-      final filePath = '$fileName';
       await supabase.storage.from('child').upload(fileName, _image!);
       return supabase.storage.from('child').getPublicUrl(fileName);
     } catch (e) {
@@ -66,16 +65,15 @@ class _ChildRegistrationState extends State<ChildRegistration> {
     }
   }
 
-  // Upload document to Supabase storage
+  // Upload document to Supabase storage (document bucket)
   Future<String?> uploadDocument() async {
     print("Document: $_document");
     if (_document == null) return null;
     try {
       final timestamp = DateTime.now().millisecondsSinceEpoch;
       final fileName = 'child-document-$timestamp.${_document!.path.split('.').last}';
-      final filePath = '$fileName';
-      await supabase.storage.from('child').upload(fileName, _document!);
-      return supabase.storage.from('child').getPublicUrl(fileName);
+      await supabase.storage.from('document').upload(fileName, _document!);
+      return supabase.storage.from('document').getPublicUrl(fileName);
     } catch (e) {
       print('Upload error: $e');
       return null;
@@ -124,9 +122,9 @@ class _ChildRegistrationState extends State<ChildRegistration> {
         'age': ageInMonths,
         'gender': selGender,
         'dob': dobController.text.trim(),
-        'documents': await uploadDocument(), // Use uploaded document URL
         'parent_id': supabase.auth.currentUser!.id,
         'photo': await uploadImage(),
+        'documents': await uploadDocument(), 
         'fee_type': _selectedFeeName,
       });
 
@@ -223,32 +221,35 @@ class _ChildRegistrationState extends State<ChildRegistration> {
                   onTap: () => _selectDate(context),
                 ),
                 SizedBox(height: 10),
-                // Document picker button
+                // Document picker widget
                 GestureDetector(
-                  onTap: _pickDocument,
-                  child: Container(
-                    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.grey),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          _document == null
-                              ? 'Select Document'
-                              : 'Document: ${_document!.path.split('/').last}',
-                          style: TextStyle(
-                              color: _document == null
-                                  ? Colors.grey
-                                  : Colors.black),
-                        ),
-                        Icon(Icons.attach_file, color: Colors.grey),
-                      ],
-                    ),
-                  ),
-                ),
+  onTap: _pickDocument,
+  child: Container(
+    padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
+    decoration: BoxDecoration(
+      border: Border.all(color: Colors.grey),
+      borderRadius: BorderRadius.circular(10),
+    ),
+    child: Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        Expanded( // Wrap Text in Expanded to limit its width
+          child: Text(
+            _document == null
+                ? 'Select Document'
+                : 'Document: ${_document!.path.split('/').last}',
+            style: TextStyle(
+              color: _document == null ? Colors.grey : Colors.black,
+            ),
+            overflow: TextOverflow.ellipsis, // Truncate with ellipsis if too long
+            maxLines: 1, // Restrict to one line
+          ),
+        ),
+        Icon(Icons.attach_file, color: Colors.grey),
+      ],
+    ),
+  ),
+),
                 SizedBox(height: 10),
                 const Text("Admission Fee Type"),
                 Row(

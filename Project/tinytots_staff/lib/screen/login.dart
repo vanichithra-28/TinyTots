@@ -15,38 +15,35 @@ class Login extends StatefulWidget {
 class _LoginState extends State<Login> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
- 
 
   Future<void> signin() async {
     try {
       final response = await supabase.auth.signInWithPassword(
-  email: emailController.text.trim(),
-  password:passwordController.text.trim(),
-);
-   final user = response.user;
-    if (user != null) {
-      final parentData = await supabase
-          .from('tbl_staff')
-          .select()
-          .eq('staff_email', emailController.text.trim())
-          .single();
+        email: emailController.text.trim(),
+        password: passwordController.text.trim(),
+      );
+      final user = response.user;
+      if (user != null) {
+        final parentData = await supabase
+            .from('tbl_staff')
+            .select()
+            .eq('staff_email', emailController.text.trim())
+            .single();
 
-      if (parentData != null) {
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (context) => Dashboard()),
-        );
-      } else {
-        CherryToast.error(
-          description: Text("Access denied. Only staffs can log in."),
-          animationType: AnimationType.fromRight,
-          autoDismiss: true,
-        ).show(context);
+        if (parentData != null) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => Dashboard()),
+          );
+        } else {
+          CherryToast.error(
+            description: Text("Access denied. Only staffs can log in."),
+            animationType: AnimationType.fromRight,
+            autoDismiss: true,
+          ).show(context);
+        }
       }
-    }
-  
     } catch (e) {
-       
       print('ERROR: $e');
       CherryToast.error(
               description: Text("No user found for that email.",
@@ -58,19 +55,17 @@ class _LoginState extends State<Login> {
       print('No user found for that email.');
     }
   }
+
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color(0xFFeceef0),
-      
       body: SingleChildScrollView(
         child: Form(
           child: Padding(
             padding: EdgeInsets.only(top: 110, left: 20, right: 20),
             child: Container(
-              
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.all(
-                     Radius.circular(20)),
+                borderRadius: BorderRadius.all(Radius.circular(20)),
                 color: Color(0xFFffffff),
               ),
               height: 500,
@@ -79,8 +74,8 @@ class _LoginState extends State<Login> {
                   children: [
                     SizedBox(height: 50),
                     Text("Welcome Back",
-                        style:
-                            TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
+                        style: TextStyle(
+                            fontSize: 20, fontWeight: FontWeight.bold)),
                     SizedBox(height: 50),
                     Padding(
                       padding: const EdgeInsets.all(8.0),
@@ -99,17 +94,19 @@ class _LoginState extends State<Login> {
                       padding: const EdgeInsets.all(8.0),
                       child: TextFormField(
                         controller: passwordController,
+                        obscureText: true,
                         decoration: InputDecoration(
-                            labelText: 'Password',
-                            border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10)),
-                            prefixIcon: Icon(Icons.lock)),
+                          labelText: 'Password',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10)),
+                          prefixIcon: Icon(Icons.lock),
+                        ),
                       ),
                     ),
                     SizedBox(height: 50),
                     ElevatedButton(
                         onPressed: () {
-                         signin();
+                          signin();
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Color(0xFFbc6c25),
@@ -119,13 +116,10 @@ class _LoginState extends State<Login> {
                             borderRadius: BorderRadius.circular(10),
                           ),
                         ),
-                        
                         child: Text(
                           'LOGIN',
-                          style: TextStyle(
-                            fontSize: 18,
-color: Color(0xfff8f9fa)
-                          ),
+                          style:
+                              TextStyle(fontSize: 18, color: Color(0xfff8f9fa)),
                         )),
                   ],
                 ),
@@ -133,7 +127,6 @@ color: Color(0xfff8f9fa)
             ),
           ),
           //img
-             
         ),
       ),
     );

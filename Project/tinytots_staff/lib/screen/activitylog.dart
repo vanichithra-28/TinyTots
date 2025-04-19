@@ -13,7 +13,7 @@ class _LogState extends State<Log> {
   final TextEditingController feedController = TextEditingController();
   TimeOfDay? napStartTime;
   TimeOfDay? napEndTime;
-   TimeOfDay? playStartTime;
+  TimeOfDay? playStartTime;
   TimeOfDay? playEndTime;
   final TextEditingController learningController = TextEditingController();
   final TextEditingController playtimeController = TextEditingController();
@@ -24,7 +24,7 @@ class _LogState extends State<Log> {
       final napSchedule = napStartTime != null && napEndTime != null
           ? '${napStartTime!.format(context)} - ${napEndTime!.format(context)}'
           : '';
-          final playSchedule = playStartTime != null && playEndTime != null
+      final playSchedule = playStartTime != null && playEndTime != null
           ? '${playStartTime!.format(context)} - ${playEndTime!.format(context)}'
           : '';
 
@@ -34,11 +34,11 @@ class _LogState extends State<Log> {
           'feed_details': feedController.text,
           'nap_schedule': napSchedule,
           'learning_activities': learningController.text,
-          'play_time_activities': playtimeController.text,
+          'play_time_activities': playSchedule,
           'staff_id': staffId,
         }
       ]);
-      
+
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text(
@@ -68,7 +68,8 @@ class _LogState extends State<Log> {
       });
     }
   }
-   Future<void> _selectPlayTime(BuildContext context, bool isStart) async {
+
+  Future<void> _selectPlayTime(BuildContext context, bool isStart) async {
     final TimeOfDay? picked = await showTimePicker(
       context: context,
       initialTime: TimeOfDay.now(),
@@ -160,7 +161,7 @@ class _LogState extends State<Log> {
                 ),
               ),
             ),
-           Padding(
+            Padding(
               padding: const EdgeInsets.all(8.0),
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,

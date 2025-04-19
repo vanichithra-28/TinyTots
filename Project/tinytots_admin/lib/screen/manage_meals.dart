@@ -171,7 +171,7 @@ class _ManageMealsState extends State<ManageMeals> {
               style: TextStyle(
                   fontSize: 20,
                   fontWeight: FontWeight.bold,
-                  color: Color(0xff8b8c89))),
+                  color: Color(0xff252422))),
           SingleChildScrollView(
             scrollDirection: Axis.horizontal,
             child: Container(
@@ -192,42 +192,42 @@ class _ManageMealsState extends State<ManageMeals> {
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff8b8c89)))),
+                              color: Color(0xff252422)))),
                   DataColumn(
                       label: Text("Meal Name",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff8b8c89)))),
+                              color: Color(0xff252422)))),
                   DataColumn(
                       label: Text("Meal Day",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff8b8c89)))),
+                              color: Color(0xff252422)))),
                   DataColumn(
                       label: Text("Edit",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff8b8c89)))),
+                              color: Color(0xff252422)))),
                   DataColumn(
                       label: Text("Delete",
                           style: TextStyle(
                               fontSize: 16,
                               fontWeight: FontWeight.bold,
-                              color: Color(0xff8b8c89)))),
+                              color: Color(0xff252422)))),
                 ],
                 rows: _mealList.asMap().entries.map((entry) {
                   return DataRow(cells: [
                     DataCell(Text((entry.key + 1).toString())),
                     DataCell(Text(
                       entry.value['meal_name'],
-                      style: TextStyle(color: Color(0xff8b8c89)),
+                      style: TextStyle(color: Color(0xff252422)),
                     )),
                     DataCell(Text(
                       entry.value['meal_day'],
-                      style: TextStyle(color: Color(0xff8b8c89)),
+                      style: TextStyle(color: Color(0xff252422)),
                     )),
                     DataCell(IconButton(
                       icon: Icon(Icons.edit, color: Colors.green),

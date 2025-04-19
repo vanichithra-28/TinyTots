@@ -128,7 +128,7 @@ class _AttendanceListState extends State<AttendanceList> {
                     sections: [
                       if ((data['Infant'] ?? 0) > 0)
                         PieChartSectionData(
-                          color: Colors.blue,
+                          color: Color(0xffffafcc),
                           value: (data['Infant'] ?? 0).toDouble(),
                           title: 'Infant\n${(((data['Infant'] ?? 0) / total) * 100).toStringAsFixed(1)}%',
                           radius: 100,
@@ -140,7 +140,7 @@ class _AttendanceListState extends State<AttendanceList> {
                         ),
                       if ((data['Toddler'] ?? 0) > 0)
                         PieChartSectionData(
-                          color: Colors.green,
+                          color: Color(0xffa2d2ff),
                           value: (data['Toddler'] ?? 0).toDouble(),
                           title: 'Toddler\n${(((data['Toddler'] ?? 0) / total) * 100).toStringAsFixed(1)}%',
                           radius: 100,
@@ -152,7 +152,7 @@ class _AttendanceListState extends State<AttendanceList> {
                         ),
                       if ((data['Preschool'] ?? 0) > 0)
                         PieChartSectionData(
-                          color: Colors.orange,
+                          color: Color(0xffcdb4db),
                           value: (data['Preschool'] ?? 0).toDouble(),
                           title: 'Preschool\n${(((data['Preschool'] ?? 0) / total) * 100).toStringAsFixed(1)}%',
                           radius: 100,

@@ -11,10 +11,14 @@ class Admission extends StatefulWidget {
 }
 
 class _AdmissionState extends State<Admission> {
+   bool isLoading = true;
   @override
   List<Map<String, dynamic>> _admissionList = [];
   void display() async {
     try {
+      setState(() {
+        isLoading = true;
+      });
       final reponse = await supabase.from('tbl_child').select();
       setState(() {
         _admissionList = reponse;
@@ -56,49 +60,49 @@ class _AdmissionState extends State<Admission> {
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff8b8c89)))),
+                            color: Color(0xff252422)))),
                 DataColumn(
                     label: Text("Name",
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff8b8c89)))),
+                            color: Color(0xff252422)))),
                 DataColumn(
                     label: Text("Application Date",
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff8b8c89)))),
+                            color: Color(0xff252422)))),
                 DataColumn(
                     label: Text("Admission Status",
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff8b8c89)))),
+                            color: Color(0xff252422)))),
                 DataColumn(
                     label: Text("View Details",
                         style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
-                            color: Color(0xff8b8c89)))),
+                            color: Color(0xff252422)))),
               ],
               rows: _admissionList.asMap().entries.map((entry) {
                 return DataRow(cells: [
                   DataCell(Text(
                     (entry.key + 1).toString(),
-                    style: TextStyle(color: Color(0xff8b8c89)),
+                    style: TextStyle(color: Color(0xff252422)),
                   )),
                   DataCell(
                     Text(
                       entry.value['name'],
-                      style: TextStyle(color: Color(0xff8b8c89)),
+                      style: TextStyle(color: Color(0xff252422)),
                     ),
                   ),
                   DataCell(Text(
                     formatDate(
                       entry.value['created_at'],
                     ),
-                    style: TextStyle(color: Color(0xff8b8c89)),
+                    style: TextStyle(color: Color(0xff252422)),
                   )),
                   DataCell(
                     entry.value['status'] == 1

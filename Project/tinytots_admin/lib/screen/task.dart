@@ -173,55 +173,55 @@ String formatDate(String timestamp) {
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                     DataColumn(
                         label: Text('Task',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                     DataColumn(
                         label: Text('Start Date',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                     DataColumn(
                         label: Text('End Date',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                     DataColumn(
                         label: Text('Status',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                     DataColumn(
                         label: Text('Action',
                             style: TextStyle(
                                 fontSize: 16,
                                 fontWeight: FontWeight.bold,
-                                color: Color(0xff8b8c89)))),
+                                color: Color(0xff252422)))),
                   ],
                   rows: _taskList.asMap().entries.map((entry) {
                     return DataRow(cells: [
                       DataCell(Text(
                         (entry.key + 1).toString(),
-                        style: TextStyle(color: Color(0xff8b8c89)),
+                        style: TextStyle(color: Color(0xff252422)),
                       )),
                       DataCell(Text(
                         entry.value['task'],
-                        style: TextStyle(color: Color(0xff8b8c89)),
+                        style: TextStyle(color: Color(0xff252422)),
                       )),
                       DataCell(Text(formatDate(entry.value['created_at'])
                         ,
-                        style: TextStyle(color: Color(0xff8b8c89)),
+                        style: TextStyle(color: Color(0xff252422)),
                       )),
                       DataCell(Text(formatDate(entry.value['end_date'])
                         ,
-                        style: TextStyle(color: Color(0xff8b8c89)),
+                        style: TextStyle(color: Color(0xff252422)),
                       )),
                       DataCell(entry.value['status'] == 1
                           ? Text(

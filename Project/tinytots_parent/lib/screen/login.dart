@@ -105,6 +105,7 @@ class _LoginState extends State<Login> {
                         child: TextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           controller: passwordController,
+                           obscureText: true, 
                           decoration: InputDecoration(
                             labelText: 'Password',
                             border: OutlineInputBorder(

@@ -105,73 +105,70 @@ class _PostState extends State<Post> {
 
   @override
   Widget build(BuildContext context) {
-    return  Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
-          child: Container(
-            decoration:BoxDecoration( 
-            color: Color(0xffffffff),),
-            child: Column(
-              
-              children: [
-                
-                GestureDetector(
-                    onTap: _pickImage,
-                    child: Container(
-                      height: 450,
-                      width: 500,
-                      decoration: BoxDecoration(
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SingleChildScrollView(
+        child: Container(
+          decoration: BoxDecoration(
+            color: Color(0xffffffff),
+          ),
+          child: Column(
+            children: [
+              GestureDetector(
+                  onTap: _pickImage,
+                  child: Container(
+                    height: 450,
+                    width: 500,
+                    decoration: BoxDecoration(
                         image: _image != null
                             ? DecorationImage(
                                 image: FileImage(_image!),
                                 fit: BoxFit.cover,
                               )
                             : null,
-                            color: Color(0xffffffff)
-                      ),
-                      child: _image == null
-                          ? HugeIcon(
-                              icon: HugeIcons.strokeRoundedPlayListAdd,
-                              color: Colors.black,
-                              size: 70.0,
-                            )
-                          : null,
-                    )
-                    
-                    ),
-                const SizedBox(height: 20),
-                TextFormField(
-                  controller: titleController,
-                  decoration: InputDecoration(
-                    labelText: 'Title',
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
+                        color: Color(0xffffffff)),
+                    child: _image == null
+                        ? HugeIcon(
+                            icon: HugeIcons.strokeRoundedPlayListAdd,
+                            color: Colors.black,
+                            size: 70.0,
+                          )
+                        : null,
+                  )),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: titleController,
+                decoration: InputDecoration(
+                  labelText: 'Title',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                const SizedBox(height: 20),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor:Color(0xFFbc6c25),
-                    shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                  ),
-                  onPressed: storeData,
-                  child: const Text(
-                    'Upload',
-                    style:TextStyle(
-                            fontSize: 18,
-                            color: Color(0xfff8f9fa),
-                          ),
+              ),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFbc6c25),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
                 ),
-                SizedBox(height: 10,)
-              ],
-            ),
+                onPressed: storeData,
+                child: const Text(
+                  'Upload',
+                  style: TextStyle(
+                    fontSize: 18,
+                    color: Color(0xfff8f9fa),
+                  ),
+                ),
+              ),
+              SizedBox(
+                height: 10,
+              )
+            ],
           ),
         ),
-      );
-    
+      ),
+    );
   }
 }

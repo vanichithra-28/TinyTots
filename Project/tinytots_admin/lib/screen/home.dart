@@ -34,7 +34,7 @@ class _HomeState extends State<Home> {
                 ),
                 SizedBox(height: 10,),
                 Container(
-                   height: 270,
+                   height: 570,
                   width: 800,
                   decoration: BoxDecoration(
                     color: Color(0xffffffff),
@@ -45,16 +45,7 @@ class _HomeState extends State<Home> {
                 ),
                                 SizedBox(height: 10,),
 
-                Container(
-                   height: 270,
-                  width: 800,
-                  decoration: BoxDecoration(
-                    color: Color(0xffffffff),
-                    borderRadius: BorderRadius.all(
-                      Radius.circular(15),
-                    ),
-                  ),
-                ),
+               
               ],
             ),
           ),

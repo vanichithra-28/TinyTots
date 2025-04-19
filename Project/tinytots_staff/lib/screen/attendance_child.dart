@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hugeicons/hugeicons.dart';
 import 'package:tinytots_staff/screen/infant.dart';
 import 'package:tinytots_staff/screen/prescchooler.dart';
 import 'package:tinytots_staff/screen/toddler.dart';
@@ -36,16 +37,28 @@ class _AttendanceChildState extends State<AttendanceChild> {
                       ));
                 },
                 child: Container(
-                    height: 200,
-                    width: 500,
-                    decoration: BoxDecoration(
-                      borderRadius: BorderRadius.all(Radius.circular(35)),
-                      color: Color(0xFFffffff),
-                    ),
-                    child: Text('Infants')),
+                  height: 200,
+                  width: 500,
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.all(Radius.circular(35)),
+                    color: Color(0xFFffffff),
+                  ),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      HugeIcon(
+  icon: HugeIcons.strokeRoundedBaby01,
+  color: Colors.black,
+  size: 70.0,
+)
+                    ],
+                  ),
+                ),
               ),
+              
+              
               SizedBox(height: 20),
-              GestureDetector(
+               GestureDetector(
                 onTap: () {
                   Navigator.push(
                       context,
@@ -60,7 +73,16 @@ class _AttendanceChildState extends State<AttendanceChild> {
                     borderRadius: BorderRadius.all(Radius.circular(35)),
                     color: Color(0xFFffffff),
                   ),
-                  child: Text('Toddlers'),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      HugeIcon(
+  icon: HugeIcons.strokeRoundedChild,
+  color: Colors.black,
+  size: 70.0,
+)
+                    ],
+                  ),
                 ),
               ),
               SizedBox(height: 20),
@@ -79,7 +101,17 @@ class _AttendanceChildState extends State<AttendanceChild> {
                     borderRadius: BorderRadius.all(Radius.circular(35)),
                     color: Color(0xFFffffff),
                   ),
-                  child: Text('Preschoolers'),
+                  child: Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      Image.asset(
+                        'assets/children.png', // Replace with your GIF path
+                        height: 150, // Adjust size as needed
+                        width: 150, // Adjust size as needed
+                        fit: BoxFit.contain,
+                      ),
+                    ],
+                  ),
                 ),
               ),
             ],

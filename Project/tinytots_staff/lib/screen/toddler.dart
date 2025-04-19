@@ -43,7 +43,9 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
   Future<void> fetchToddlers() async {
     try {
       String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      final childrenResponse = await supabase.from('tbl_child').select().eq('status', 1);;
+      final childrenResponse =
+          await supabase.from('tbl_child').select().eq('status', 1);
+      ;
       List<Map<String, dynamic>> allChildren =
           List<Map<String, dynamic>>.from(childrenResponse);
 
