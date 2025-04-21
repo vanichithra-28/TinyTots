@@ -48,7 +48,7 @@ class _ChildActivityState extends State<ChildActivity> {
       List<Map<String, dynamic>> allChildren = List<Map<String, dynamic>>.from(childrenResponse);
 
      
-      final attendanceResponse = await supabase.from('tbl_attendance').select().eq('date', todayDate);
+      final attendanceResponse = await supabase.from('tbl_attendance').select().eq('date', todayDate).eq('role','CHILD');
 
       Map<int, String> existingAttendance = {};
       Map<int, bool> existingCheckIns = {};
@@ -84,17 +84,17 @@ class _ChildActivityState extends State<ChildActivity> {
         // Set attendance status for all children
         checkInAttendance = {
           for (var child in allChildren)
-            child['id']: existingCheckIns[child['id']] ?? false
+            if (child['id'] != null) child['id'] as int: existingCheckIns[child['id']] ?? false
         };
 
         checkOutAttendance = {
           for (var child in allChildren)
-            child['id']: existingCheckOuts[child['id']] ?? false
+            if (child['id'] != null) child['id'] as int: existingCheckOuts[child['id']] ?? false
         };
 
         attendanceIds = {
           for (var child in allChildren)
-            child['id']: existingAttendance[child['id']] ?? ''
+            if (child['id'] != null) child['id'] as int: existingAttendance[child['id']] ?? ''
         };
       });
     } catch (e) {
@@ -165,7 +165,10 @@ class _ChildActivityState extends State<ChildActivity> {
           elevation: 0,
           backgroundColor: Colors.white,
           foregroundColor: const Color(0xFFbc6c25),
-          title: const Text('Child Activity'),
+          title: const Text('Child Activity', style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),),
           bottom: const TabBar(
             labelColor: Color(0xFFbc6c25),
             unselectedLabelColor: Colors.grey,

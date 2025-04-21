@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tinytots_admin/screen/Login.dart';
+import 'package:tinytots_admin/screen/dashboard.dart';
 
 Future<void> main() async {
   await Supabase.initialize(
@@ -18,6 +19,20 @@ class MainApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(debugShowCheckedModeBanner:false,home: Login());
+    return const MaterialApp(debugShowCheckedModeBanner:false,home: AuthWrapper());
+  }
+}
+
+class AuthWrapper extends StatelessWidget {
+  const AuthWrapper({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final session = supabase.auth.currentSession;
+    if (session != null) {
+      return Dashboard(); // Replace with your home screen widget
+    } else {
+      return Login(); // Replace with your auth page widget
+    }
   }
 }

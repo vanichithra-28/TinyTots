@@ -16,7 +16,6 @@ class Events extends StatefulWidget {
 }
 
 class _EventsState extends State<Events> {
-  @override
   final TextEditingController _nameController = TextEditingController();
   final TextEditingController _dateController = TextEditingController();
   final TextEditingController _detailsController = TextEditingController();
@@ -78,6 +77,9 @@ class _EventsState extends State<Events> {
       _nameController.clear();
       _dateController.clear();
       _detailsController.clear();
+      setState(() {
+        pickedImage = null; // Remove the picked image after submit
+      });
     } catch (e) {
       print("Error inserting event details:$e");
     }
@@ -129,6 +131,10 @@ class _EventsState extends State<Events> {
 
   Future<void> delete(int delId) async {
     try {
+      // Delete participants referencing this event
+      await supabase.from('tbl_participant').delete().eq('event_id', delId);
+
+      // Now delete the event
       await supabase.from('tbl_event').delete().eq('id', delId);
       display();
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -154,187 +160,391 @@ class _EventsState extends State<Events> {
       padding: const EdgeInsets.only(top: 20),
       child: Row(
         children: [
-          SizedBox(
-            width: 20,
-          ),
+          SizedBox(width: 20),
+          // Event Form Card
           Expanded(
             child: Container(
               height: 630,
+              decoration: BoxDecoration(
+                color: const Color(0xfff4f6fa),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.12),
+                    spreadRadius: 4,
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
+                  )
+                ],
+              ),
               child: Padding(
                 padding: const EdgeInsets.all(28.0),
                 child: Column(
                   children: [
+                    // Image Picker
                     SizedBox(
-                      height: 120,
-                      width: 120,
+                      height: 110,
+                      width: 110,
                       child: pickedImage == null
                           ? GestureDetector(
                               onTap: handleImagePick,
-                              child: Icon(
-                                Icons.add_a_photo,
-                                color: Color(0xff3e53a0),
-                                size: 50,
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color: Color(0xffeceef0),
+                                  borderRadius: BorderRadius.circular(12),
+                                ),
+                                child: Icon(
+                                  Icons.add_a_photo,
+                                  color: Color(0xff3e53a0),
+                                  size: 44,
+                                ),
                               ),
                             )
                           : GestureDetector(
                               onTap: handleImagePick,
                               child: ClipRRect(
-                                borderRadius: BorderRadius.zero,
+                                borderRadius: BorderRadius.circular(12),
                                 child: pickedImage!.bytes != null
                                     ? Image.memory(
-                                        Uint8List.fromList(
-                                            pickedImage!.bytes!), // For web
+                                        Uint8List.fromList(pickedImage!.bytes!),
                                         fit: BoxFit.cover,
                                       )
                                     : Image.file(
-                                        File(pickedImage!
-                                            .path!), // For mobile/desktop
+                                        File(pickedImage!.path!),
                                         fit: BoxFit.cover,
                                       ),
                               ),
                             ),
                     ),
-                    SizedBox(
-                      height: 30,
-                    ),
+                    SizedBox(height: 24),
+                    // Event Name
                     TextFormField(
                       controller: _nameController,
                       decoration: InputDecoration(
-                          labelText: 'Event Name',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                          )),
+                        labelText: 'Event Name',
+                        prefixIcon: Icon(Icons.event, color: Color(0xff3e53a0)),
+                        filled: true,
+                        fillColor: Color(0xffeceef0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 12),
+                    // Event Date
                     TextFormField(
                       controller: _dateController,
                       decoration: InputDecoration(
-                          labelText: 'Event Date',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                          )),
+                        labelText: 'Event Date',
+                        prefixIcon: Icon(Icons.calendar_today,
+                            color: Color(0xff3e53a0)),
+                        filled: true,
+                        fillColor: Color(0xffeceef0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                       readOnly: true,
                       onTap: () => _selectDate(context),
                     ),
-                    SizedBox(
-                      height: 10,
-                    ),
+                    SizedBox(height: 12),
+                    // Event Details
                     TextFormField(
                       controller: _detailsController,
+                      maxLines: 2,
                       decoration: InputDecoration(
-                          labelText: 'Event Deatils',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(3),
-                          )),
+                        labelText: 'Event Details',
+                        prefixIcon:
+                            Icon(Icons.description, color: Color(0xff3e53a0)),
+                        filled: true,
+                        fillColor: Color(0xffeceef0),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
                     ),
+                    SizedBox(height: 18),
+                    // Submit Button
                     SizedBox(
-                      height: 10,
+                      width: double.infinity,
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Color(0xff3e53a0),
+                          foregroundColor: Color(0xffeceef0),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8),
+                          ),
+                          padding: EdgeInsets.symmetric(vertical: 14),
+                        ),
+                        onPressed: storeData,
+                        icon: Icon(Icons.send,
+                            color: Color(0xffeceef0), size: 20),
+                        label: Text('Submit', style: TextStyle(fontSize: 16)),
+                      ),
                     ),
-                    ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff3e53a0),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4))),
-                        onPressed: () {
-                          storeData();
-                        },
-                        child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),))
                   ],
                 ),
               ),
-              width: 400,
-              decoration: BoxDecoration(
-                  color: const Color(0xffffffff),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.grey.withOpacity(0.2),
-                      spreadRadius: 5,
-                      blurRadius: 7,
-                      offset: Offset(0, 3),
-                    )
-                  ]),
             ),
           ),
-          SizedBox(
-            width: 10,
-          ),
+          SizedBox(width: 18),
+          // Event Grid Card
           Expanded(
             flex: 2,
             child: Container(
               height: 630,
-              
               decoration: BoxDecoration(
-                color: const Color(0xffffffff),
+                color: const Color(0xfff4f6fa),
+                borderRadius: BorderRadius.circular(16),
                 boxShadow: [
                   BoxShadow(
-                    color: Colors.grey.withOpacity(0.2),
-                    spreadRadius: 5,
-                    blurRadius: 7,
-                    offset: Offset(0, 3),
+                    color: Colors.grey.withOpacity(0.12),
+                    spreadRadius: 4,
+                    blurRadius: 12,
+                    offset: Offset(0, 4),
                   )
                 ],
               ),
-            
-              child: Column(
-                children: [
-                  SizedBox(
-                      height: 600,
+              child: Padding(
+                padding: const EdgeInsets.all(18.0),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      "All Events",
+                      style: TextStyle(
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                        color: Color(0xff3e53a0),
+                      ),
+                    ),
+                    SizedBox(height: 12),
+                    Expanded(
                       child: GridView.builder(
                         shrinkWrap: true,
                         gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                           crossAxisCount: 2,
-                          crossAxisSpacing: 20.0,
-                          mainAxisSpacing: 25.0,
-                          childAspectRatio: 1.3,
+                          crossAxisSpacing: 18.0,
+                          mainAxisSpacing: 18.0,
+                          childAspectRatio: 1.25,
                         ),
                         itemCount: _eventList.length,
                         itemBuilder: (context, index) {
                           final event = _eventList[index];
                           return Card(
                             color: Color(0xff3e53a0),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            elevation: 4,
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Stack(
-                                  children: [
-                                    Container(
-                                      height: 250,
-                                      decoration: BoxDecoration(
-                                        border: Border.all(
-                                            color: Colors.white, width: 2.5),
-                                        image: DecorationImage(
-                                          image: NetworkImage(
-                                              event['event_photo']),
-                                          fit: BoxFit.fill,
+                                // Event Image
+                                ClipRRect(
+                                  borderRadius: BorderRadius.vertical(
+                                      top: Radius.circular(14)),
+                                  child: Container(
+                                    height: 120,
+                                    width: double.infinity,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xffeceef0),
+                                    ),
+                                    child: event['event_photo'] != null
+                                        ? Image.network(
+                                            event['event_photo'],
+                                            fit: BoxFit.cover,
+                                          )
+                                        : Icon(Icons.event,
+                                            size: 60, color: Color(0xff3e53a0)),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 8),
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        event['event_name'] ?? '',
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontWeight: FontWeight.bold,
+                                          fontSize: 16,
                                         ),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                      SizedBox(height: 4),
+                                      Row(
+                                        children: [
+                                          Icon(Icons.calendar_today,
+                                              size: 16,
+                                              color: Color(0xffeceef0)),
+                                          SizedBox(width: 4),
+                                          Text(
+                                            event['event_date'] ?? '',
+                                            style: TextStyle(
+                                              color: Color(0xffeceef0),
+                                              fontSize: 13,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      SizedBox(height: 4),
+                                      Text(
+                                        event['event_details'] ?? '',
+                                        style: TextStyle(
+                                          color: Color(0xffeceef0),
+                                          fontSize: 13,
+                                        ),
+                                        maxLines: 2,
+                                        overflow: TextOverflow.ellipsis,
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                Spacer(),
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.end,
+                                  children: [
+                                    IconButton(
+                                      onPressed: () {
+                                        // Edit event
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) {
+                                            final TextEditingController
+                                                editNameController =
+                                                TextEditingController(
+                                                    text: event['event_name']);
+                                            final TextEditingController
+                                                editDateController =
+                                                TextEditingController(
+                                                    text: event['event_date']);
+                                            final TextEditingController
+                                                editDetailsController =
+                                                TextEditingController(
+                                                    text:
+                                                        event['event_details']);
+                                            return AlertDialog(
+                                              title: Text('Edit Event'),
+                                              content: SingleChildScrollView(
+                                                child: Column(
+                                                  mainAxisSize:
+                                                      MainAxisSize.min,
+                                                  children: [
+                                                    TextFormField(
+                                                      controller:
+                                                          editNameController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              labelText:
+                                                                  'Event Name'),
+                                                    ),
+                                                    TextFormField(
+                                                      controller:
+                                                          editDateController,
+                                                      decoration:
+                                                          InputDecoration(
+                                                              labelText:
+                                                                  'Event Date'),
+                                                      onTap: () async {
+                                                        FocusScope.of(context)
+                                                            .requestFocus(
+                                                                FocusNode());
+                                                        DateTime? picked =
+                                                            await showDatePicker(
+                                                          context: context,
+                                                          initialDate: DateTime
+                                                                  .tryParse(
+                                                                      editDateController
+                                                                          .text) ??
+                                                              DateTime.now(),
+                                                          firstDate:
+                                                              DateTime(2000),
+                                                          lastDate:
+                                                              DateTime(2100),
+                                                        );
+                                                        if (picked != null) {
+                                                          editDateController
+                                                                  .text =
+                                                              "${picked.toLocal()}"
+                                                                  .split(
+                                                                      ' ')[0];
+                                                        }
+                                                      },
+                                                      readOnly: true,
+                                                    ),
+                                                    TextFormField(
+                                                      controller:
+                                                          editDetailsController,
+                                                      decoration: InputDecoration(
+                                                          labelText:
+                                                              'Event Details'),
+                                                      maxLines: 2,
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () =>
+                                                      Navigator.pop(context),
+                                                  child: Text('Cancel'),
+                                                ),
+                                                ElevatedButton(
+                                                  onPressed: () async {
+                                                    await supabase
+                                                        .from('tbl_event')
+                                                        .update({
+                                                      'event_name':
+                                                          editNameController
+                                                              .text,
+                                                      'event_date':
+                                                          editDateController
+                                                              .text,
+                                                      'event_details':
+                                                          editDetailsController
+                                                              .text,
+                                                    }).eq('id', event['id']);
+                                                    Navigator.pop(context);
+                                                    display();
+                                                  },
+                                                  child: Text('Save'),
+                                                ),
+                                              ],
+                                            );
+                                          },
+                                        );
+                                      },
+                                      icon: Icon(Icons.edit,
+                                          color: Color(0xffeceef0)),
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        delete(event['id']);
+                                      },
+                                      icon: HugeIcon(
+                                        icon: HugeIcons.strokeRoundedDelete02,
+                                        color: Color(0xffeceef0),
+                                        size: 22.0,
                                       ),
                                     ),
                                   ],
                                 ),
-                                SizedBox(height: 10),
-                                Row(
-                                  children: [
-                                    Expanded(child: Text(event['event_name'],style:TextStyle(color: Color(0xffffffff),),)),
-                                    Expanded(child: Text(event['event_date'],style:TextStyle(color: Color(0xffffffff),),)),
-                                    IconButton(
-                                      onPressed: () {
-                                       delete(event['id']);
-                                      },
-                                      icon: HugeIcon(
-                                        icon: HugeIcons.strokeRoundedDelete02,
-                                        color: Color(0xffffffff),
-                                        size: 24.0,
-                                      ),
-                                    )
-                                  ],
-                                )
                               ],
                             ),
                           );
                         },
-                      )),
-                ],
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

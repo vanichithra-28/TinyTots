@@ -56,10 +56,13 @@ class _InfantState extends State<Infant> with SingleTickerProviderStateMixin {
 
       for (var record in attendanceResponse) {
         final id = record['id'];
-        if (id != null) {
-          existingAttendance[record['child_id']] = id.toString();
-          existingCheckIns[record['child_id']] = record['check_in'] != null;
-          existingCheckOuts[record['child_id']] = record['check_out'] != null;
+        final childId = record['child_id'] as int?;
+        if (id != null && childId != null) {
+          existingAttendance[childId] = id.toString();
+          existingCheckIns[childId] = record['check_in'] != null;
+          existingCheckOuts[childId] = record['check_out'] != null;
+        } else {
+          print("Skipping attendance record with null id or child_id: $record");
         }
       }
 
@@ -84,15 +87,17 @@ class _InfantState extends State<Infant> with SingleTickerProviderStateMixin {
         };
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error fetching infants: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching infants: $e")),
+      );
     }
   }
 
   Future<void> updateAttendance(int childId, bool isCheckIn, bool value) async {
     try {
       String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
-      final String currentId = attendanceIds[childId] ??
-          ''; // Changed to non-nullable String with default
+      final String currentId = attendanceIds[childId] ?? '';
 
       if (value) {
         if (currentId.isEmpty) {
@@ -133,9 +138,10 @@ class _InfantState extends State<Infant> with SingleTickerProviderStateMixin {
         }
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error updating attendance: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error updating attendance: $e")));
+        SnackBar(content: Text("Error updating attendance: $e")),
+      );
     }
   }
 

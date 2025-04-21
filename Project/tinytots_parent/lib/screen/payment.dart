@@ -3,7 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:tinytots_parent/screen/paymentwindow.dart';
 
 class Payment extends StatefulWidget {
-   final int childId;
+  final int childId;
   const Payment({super.key, required this.childId});
 
   @override
@@ -35,32 +35,53 @@ class _PaymentState extends State<Payment> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Payment'),
-        backgroundColor: Color(0xFFffffff),
+        title: const Text(
+          'Payment',
+          style: TextStyle(
+            color: Color(0xFFbc6c25),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: const Color(0xFFFFFFFF),
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Color(0xFFbc6c25)),
       ),
-      backgroundColor: Color(0xFFf8f9fa),
-      body: Padding(
-        padding: const EdgeInsets.all(10.0),
+      backgroundColor: const Color(0xFFf8f9fa),
+      body: Center(
         child: Container(
-          height: 680,
-          width: 365,
+          height: 500,
+          constraints: const BoxConstraints(maxWidth: 420),
+          padding: const EdgeInsets.all(20.0),
           decoration: BoxDecoration(
             color: const Color(0xFFffffff),
+            borderRadius: BorderRadius.circular(18),
             boxShadow: [
               BoxShadow(
-                color: Colors.grey.withOpacity(0.2),
+                color: Colors.grey.withOpacity(0.13),
                 spreadRadius: 5,
-                blurRadius: 7,
-                offset: Offset(0, 3),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               )
             ],
           ),
           child: Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
+              const SizedBox(height: 16),
+              Text(
+                "Fee Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xFFbc6c25),
+                ),
+              ),
+              const SizedBox(height: 18),
               SingleChildScrollView(
                 scrollDirection: Axis.horizontal,
                 child: DataTable(
-                  columnSpacing: 20,
+                  columnSpacing: 24,
+                  headingRowColor: MaterialStateProperty.all(const Color(0xFFf6f6f6)),
                   columns: [
                     DataColumn(
                       label: Text(
@@ -93,46 +114,84 @@ class _PaymentState extends State<Payment> {
                       ),
                     ),
                   ],
-                  rows: _accounts.map((entry) {
-                    return DataRow(
-                      cells: [
-                        DataCell(Text(entry['amount_due'].toString())),
-                        DataCell(Text(entry['due_date'].toString())),
-                        DataCell(
-                          Text(
-                            entry['status'] == 1 ? "Paid" : "Pending",
-                            style: TextStyle(
-                              color: entry['status'] == 1
-                                  ? Colors.green
-                                  : Colors.red,
-                              fontWeight: FontWeight.bold,
-                            ),
+                  rows: _accounts.isEmpty
+                      ? [
+                          DataRow(
+                            cells: [
+                              DataCell(Text('-')),
+                              DataCell(Text('-')),
+                              DataCell(Text('-')),
+                            ],
                           ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                        ]
+                      : _accounts.map((entry) {
+                          return DataRow(
+                            cells: [
+                              DataCell(Text(
+                                '₹${entry['amount_due']}',
+                                style: const TextStyle(fontWeight: FontWeight.w600),
+                              )),
+                              DataCell(Text(
+                                entry['due_date'].toString(),
+                                style: const TextStyle(fontWeight: FontWeight.w500),
+                              )),
+                              DataCell(
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  decoration: BoxDecoration(
+                                    color: entry['status'] == 1
+                                        ? Colors.green.withOpacity(0.12)
+                                        : Colors.red.withOpacity(0.12),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Text(
+                                    entry['status'] == 1 ? "Paid" : "Pending",
+                                    style: TextStyle(
+                                      color: entry['status'] == 1
+                                          ? Colors.green
+                                          : Colors.red,
+                                      fontWeight: FontWeight.bold,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          );
+                        }).toList(),
                 ),
               ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => Paymentwindow(childId: widget.childId,)),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Color(0xFFbc6c25),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(4),
+              const SizedBox(height: 28),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Paymentwindow(childId: widget.childId),
+                      ),
+                    );
+                  },
+                  icon: const Icon(Icons.payment, color: Colors.white),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xFFbc6c25),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    elevation: 2,
+                  ),
+                  label: const Text(
+                    'Proceed to Payment',
+                    style: TextStyle(
+                      color: Color(0xfff8f9fa),
+                      fontSize: 17,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
-                child: Text(
-                  'Proceed Payment',
-                  style: TextStyle(color: Color(0xfff8f9fa)),
-                ),
               ),
+              const SizedBox(height: 10),
             ],
           ),
         ),

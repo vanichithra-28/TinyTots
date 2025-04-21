@@ -16,6 +16,7 @@ class _EditProfileState extends State<EditProfile> {
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
   File? _image;
   final ImagePicker _picker = ImagePicker();
   Map<String, dynamic> staffData = {};
@@ -139,83 +140,111 @@ Future<String?> uploadImage() async {
                     offset: Offset(0, 3),
                   )
                 ]),
-            child: Column(
-              children: [
-                SizedBox(height: 30,),
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.white38,
-                      backgroundImage:
-                          _image != null ? FileImage(_image!) : NetworkImage(staffData['staff_photo'] ?? ""),
-                      child: _image == null
-                          ?  HugeIcon(
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(height: 30,),
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.white38,
+                        backgroundImage:
+                            _image != null ? FileImage(_image!) : NetworkImage(staffData['staff_photo'] ?? ""),
+                        child: _image == null
+                            ?  HugeIcon(
   icon: HugeIcons.strokeRoundedCameraAdd01,
   color: Colors.black12,
   size: 24.0,
 )
-                          : null,
+                            : null,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  SizedBox(
+                    height: 30,
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: contactController,
-                    decoration: InputDecoration(
-                        labelText: 'Contact',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your name';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: addressController,
-                    decoration: InputDecoration(
-                        labelText: 'Address',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  SizedBox(
+                    height: 10,
                   ),
-                ),
-                ElevatedButton(
-                    onPressed: () {
-                      updateData();
-                    },
-                     style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFbc6c25),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: contactController,
+                      keyboardType: TextInputType.phone,
+                      decoration: InputDecoration(
+                          labelText: 'Contact',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your contact number';
+                        }
+                        final phoneRegex = RegExp(r'^[789]\d{9,11}$');
+                        if (!phoneRegex.hasMatch(value.trim())) {
+                          return 'Phone must start with 7, 8, or 9 and be 10-12 digits';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  SizedBox(
+                    height: 10,
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: addressController,
+                      decoration: InputDecoration(
+                          labelText: 'Address',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Please enter your address';
+                        }
+                        return null;
+                      },
+                    ),
+                  ),
+                  ElevatedButton(
+                      onPressed: () {
+                        if (_formKey.currentState!.validate()) {
+                          updateData();
+                        }
+                      },
+                       style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFbc6c25),
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 50, vertical: 10),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
                           ),
-                        ),
-                    child: Text('Update ',style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xfff8f9fa),
-                          ),)),
-              ],
+                      child: Text('Update ',style: TextStyle(
+                              fontSize: 18,
+                              color: Color(0xfff8f9fa),
+                            ),)),
+                ],
+              ),
             ),
           ),
         ),

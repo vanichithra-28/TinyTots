@@ -104,7 +104,13 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
     return Scaffold(
       backgroundColor: const Color(0xfff8f9fa),
       appBar: AppBar(
-        title: const Text("Tasks"),
+        elevation: 0,
+          backgroundColor: Colors.white,
+          foregroundColor: const Color(0xFFbc6c25),
+        title: const Text("Tasks", style: TextStyle(
+            fontWeight: FontWeight.bold,
+            fontSize: 20,
+          ),),
         bottom: TabBar(
           controller: _tabController,
           tabs: const [

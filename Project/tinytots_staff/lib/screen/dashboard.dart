@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:hugeicons/hugeicons.dart';
 import 'package:tinytots_staff/screen/dashboard_content.dart';
+import 'package:tinytots_staff/screen/event.dart';
 import 'package:tinytots_staff/screen/login.dart';
 import 'package:tinytots_staff/screen/mypost.dart';
 import 'package:tinytots_staff/screen/post.dart';
@@ -20,10 +21,11 @@ class _DashboardState extends State<Dashboard> {
     "Dashboard",
     "Account",
     "New post",
+    "Events",
     "My post",
   ];
 
-  List<Widget> pages = [DashboardContent(), Profile(), Post(), Mypost()];
+  List<Widget> pages = [DashboardContent(), Profile(), Post(),Events(), Mypost()];
 
   
   void _handleLogout() {
@@ -96,6 +98,14 @@ class _DashboardState extends State<Dashboard> {
               color: Colors.black,
               size: 30.0,
             ),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: HugeIcon(
+  icon: HugeIcons.strokeRoundedCalendar03,
+  color: Colors.black,
+  size: 30.0,
+),
             label: '',
           ),
           BottomNavigationBarItem(

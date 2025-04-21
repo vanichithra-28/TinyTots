@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:tinytots_staff/main.dart';
 import 'package:intl/intl.dart';
+import 'package:tinytots_staff/main.dart';
 
 class ToddlerAttendance extends StatefulWidget {
   const ToddlerAttendance({super.key});
@@ -45,7 +45,6 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
       String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
       final childrenResponse =
           await supabase.from('tbl_child').select().eq('status', 1);
-      ;
       List<Map<String, dynamic>> allChildren =
           List<Map<String, dynamic>>.from(childrenResponse);
 
@@ -58,10 +57,13 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
 
       for (var record in attendanceResponse) {
         final id = record['id'];
-        if (id != null) {
-          existingAttendance[record['child_id']] = id.toString();
-          existingCheckIns[record['child_id']] = record['check_in'] != null;
-          existingCheckOuts[record['child_id']] = record['check_out'] != null;
+        final childId = record['child_id'] as int?;
+        if (id != null && childId != null) {
+          existingAttendance[childId] = id.toString();
+          existingCheckIns[childId] = record['check_in'] != null;
+          existingCheckOuts[childId] = record['check_out'] != null;
+        } else {
+          print("Skipping attendance record with null id or child_id: $record");
         }
       }
 
@@ -88,7 +90,10 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
         };
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error fetching toddlers: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching toddlers: $e")),
+      );
     }
   }
 
@@ -133,9 +138,10 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
         }
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error updating attendance: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error updating attendance: $e")));
+        SnackBar(content: Text("Error updating attendance: $e")),
+      );
     }
   }
 
@@ -182,8 +188,8 @@ class _ToddlerAttendanceState extends State<ToddlerAttendance>
         child: TabBarView(
           controller: _tabController,
           children: [
-            buildAttendanceTab(true),
-            buildAttendanceTab(false),
+            buildAttendanceTab(true), // Check In tab
+            buildAttendanceTab(false), // Check Out tab
           ],
         ),
       ),

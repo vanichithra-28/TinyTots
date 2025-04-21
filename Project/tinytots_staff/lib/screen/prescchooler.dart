@@ -44,7 +44,8 @@ class _PreschoolAttendanceState extends State<PreschoolAttendance>
     try {
       String todayDate = DateFormat('yyyy-MM-dd').format(DateTime.now());
 
-      final childrenResponse = await supabase.from('tbl_child').select().eq('status', 1);
+      final childrenResponse =
+          await supabase.from('tbl_child').select().eq('status', 1);
       List<Map<String, dynamic>> allChildren =
           List<Map<String, dynamic>>.from(childrenResponse);
 
@@ -57,10 +58,13 @@ class _PreschoolAttendanceState extends State<PreschoolAttendance>
 
       for (var record in attendanceResponse) {
         final id = record['id'];
-        if (id != null) {
-          existingAttendance[record['child_id']] = id.toString();
-          existingCheckIns[record['child_id']] = record['check_in'] != null;
-          existingCheckOuts[record['child_id']] = record['check_out'] != null;
+        final childId = record['child_id'] as int?;
+        if (id != null && childId != null) {
+          existingAttendance[childId] = id.toString();
+          existingCheckIns[childId] = record['check_in'] != null;
+          existingCheckOuts[childId] = record['check_out'] != null;
+        } else {
+          print("Skipping attendance record with null id or child_id: $record");
         }
       }
 
@@ -87,7 +91,10 @@ class _PreschoolAttendanceState extends State<PreschoolAttendance>
         };
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error fetching preschoolers: $e");
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text("Error fetching preschoolers: $e")),
+      );
     }
   }
 
@@ -132,9 +139,10 @@ class _PreschoolAttendanceState extends State<PreschoolAttendance>
         }
       });
     } catch (e) {
-      print("ERROR $e");
+      print("Error updating attendance: $e");
       ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text("Error updating attendance: $e")));
+        SnackBar(content: Text("Error updating attendance: $e")),
+      );
     }
   }
 
@@ -180,8 +188,8 @@ class _PreschoolAttendanceState extends State<PreschoolAttendance>
         child: TabBarView(
           controller: _tabController,
           children: [
-            buildAttendanceTab(true),
-            buildAttendanceTab(false),
+            buildAttendanceTab(true), // Check In tab
+            buildAttendanceTab(false), // Check Out tab
           ],
         ),
       ),

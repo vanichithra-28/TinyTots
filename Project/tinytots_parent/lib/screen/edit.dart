@@ -5,7 +5,6 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:tinytots_parent/main.dart';
 
-
 class EditProfile extends StatefulWidget {
   const EditProfile({super.key});
 
@@ -14,6 +13,7 @@ class EditProfile extends StatefulWidget {
 }
 
 class _EditProfileState extends State<EditProfile> {
+  final _formKey = GlobalKey<FormState>();
   final TextEditingController nameController = TextEditingController();
   final TextEditingController contactController = TextEditingController();
   final TextEditingController addressController = TextEditingController();
@@ -26,7 +26,7 @@ class _EditProfileState extends State<EditProfile> {
       setState(() {
         _image = File(pickedFile.path);
       });
-      String? url = await uploadImage(); 
+      String? url = await uploadImage();
       await updateImage(url);
     }
   }
@@ -44,7 +44,6 @@ class _EditProfileState extends State<EditProfile> {
 
   Future<void> display() async {
     try {
-     
       if (staffData != null) {
         final response = await supabase
             .from('tbl_parent')
@@ -87,25 +86,24 @@ class _EditProfileState extends State<EditProfile> {
     }
   }
 
-Future<String?> uploadImage() async {
-  try {
-    String uid = supabase.auth.currentUser!.id;
+  Future<String?> uploadImage() async {
+    try {
+      String uid = supabase.auth.currentUser!.id;
 
-  
-    final timestamp = DateTime.now().millisecondsSinceEpoch; 
-    final fileName = '$uid-photo-$timestamp'; 
+      final timestamp = DateTime.now().millisecondsSinceEpoch;
+      final fileName = '$uid-photo-$timestamp';
 
-    // Upload the image to Supabase storage
-    await supabase.storage.from('parent').upload(fileName, _image!);
+      // Upload the image to Supabase storage
+      await supabase.storage.from('parent').upload(fileName, _image!);
 
-    // Get the public URL of the uploaded image
-    final imageUrl = supabase.storage.from('parent').getPublicUrl(fileName);
-    return imageUrl;
-  } catch (e) {
-    print('Image upload failed: $e');
-    return null;
+      // Get the public URL of the uploaded image
+      final imageUrl = supabase.storage.from('parent').getPublicUrl(fileName);
+      return imageUrl;
+    } catch (e) {
+      print('Image upload failed: $e');
+      return null;
+    }
   }
-}
 
   @override
   void initState() {
@@ -140,83 +138,115 @@ Future<String?> uploadImage() async {
                     offset: Offset(0, 3),
                   )
                 ]),
-            child: Column(
-              children: [
-                SizedBox(height: 30,),
-                Center(
-                  child: GestureDetector(
-                    onTap: _pickImage,
-                    child: CircleAvatar(
-                      radius: 70,
-                      backgroundColor: Colors.white38,
-                      backgroundImage:
-                          _image != null ? FileImage(_image!) : NetworkImage(staffData['parent_photo'] ?? ""),
-                      child: _image == null
-                          ?  HugeIcon(
-  icon: HugeIcons.strokeRoundedCameraAdd01,
-  color: Colors.black12,
-  size: 24.0,
-)
-                          : null,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  SizedBox(height: 30),
+                  Center(
+                    child: GestureDetector(
+                      onTap: _pickImage,
+                      child: CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.white38,
+                        backgroundImage: _image != null
+                            ? FileImage(_image!)
+                            : NetworkImage(staffData['parent_photo'] ?? ""),
+                        child: _image == null
+                            ? HugeIcon(
+                                icon: HugeIcons.strokeRoundedCameraAdd01,
+                                color: Colors.black12,
+                                size: 24.0,
+                              )
+                            : null,
+                      ),
                     ),
                   ),
-                ),
-                SizedBox(
-                  height: 30,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: nameController,
-                    decoration: InputDecoration(
-                        labelText: 'Name',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  SizedBox(height: 30),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: nameController,
+                      decoration: InputDecoration(
+                          labelText: 'Name',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Name is required';
+                        }
+                        if (value.trim().length < 2) {
+                          return 'Name must be at least 2 characters';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: contactController,
-                    decoration: InputDecoration(
-                        labelText: 'Contact',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: contactController,
+                      decoration: InputDecoration(
+                          labelText: 'Contact',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      keyboardType: TextInputType.phone,
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Contact is required';
+                        }
+                        if (!RegExp(r'^[789]\d{9,11}$').hasMatch(value.trim())) {
+                          return 'Enter a valid phone number starting with 7, 8, or 9';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                SizedBox(
-                  height: 10,
-                ),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    controller: addressController,
-                    decoration: InputDecoration(
-                        labelText: 'Address',
-                        border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10))),
+                  SizedBox(height: 10),
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: TextFormField(
+                      controller: addressController,
+                      decoration: InputDecoration(
+                          labelText: 'Address',
+                          border: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10))),
+                      validator: (value) {
+                        if (value == null || value.trim().isEmpty) {
+                          return 'Address is required';
+                        }
+                        if (value.trim().length < 5) {
+                          return 'Address must be at least 5 characters';
+                        }
+                        return null;
+                      },
+                    ),
                   ),
-                ),
-                ElevatedButton(
+                  ElevatedButton(
                     onPressed: () {
-                      updateData();
+                      if (_formKey.currentState!.validate()) {
+                        updateData();
+                      }
                     },
-                     style: ElevatedButton.styleFrom(
-                          backgroundColor: Color(0xFFbc6c25),
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 50, vertical: 10),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                    child: Text('Update ',style: TextStyle(
-                            fontSize: 18,
-                            color: Color(0xfff8f9fa),
-                          ),)),
-              ],
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFbc6c25),
+                      padding: EdgeInsets.symmetric(
+                          horizontal: 50, vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    child: Text(
+                      'Update ',
+                      style: TextStyle(
+                        fontSize: 18,
+                        color: Color(0xfff8f9fa),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
         ),

@@ -87,6 +87,14 @@ class _MypostState extends State<Mypost> {
                 maxScale: 4.0,
                 child: Container(
                   decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(16),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 12,
+                        offset: Offset(0, 4),
+                      ),
+                    ],
                     image: DecorationImage(
                       image: NetworkImage(post['post_file']),
                       fit: BoxFit.contain,
@@ -99,7 +107,10 @@ class _MypostState extends State<Mypost> {
                 left: 0,
                 right: 0,
                 child: Container(
-                  color: Colors.white,
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.vertical(bottom: Radius.circular(16)),
+                  ),
                   padding: const EdgeInsets.all(16),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -114,10 +125,11 @@ class _MypostState extends State<Mypost> {
                         ),
                       ),
                       const SizedBox(height: 8),
+                      const Divider(),
                       Text(
                         formatTimeAgo(post['created_at']),
                         style: const TextStyle(
-                          color: Colors.black,
+                          color: Colors.black54,
                           fontSize: 14,
                         ),
                       ),
@@ -128,9 +140,12 @@ class _MypostState extends State<Mypost> {
               Positioned(
                 top: 10,
                 right: 10,
-                child: IconButton(
-                  icon: const Icon(Icons.close, color: Colors.white),
-                  onPressed: () => Navigator.of(context).pop(),
+                child: CircleAvatar(
+                  backgroundColor: Colors.black54,
+                  child: IconButton(
+                    icon: const Icon(Icons.close, color: Colors.white),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                 ),
               ),
             ],
@@ -152,63 +167,88 @@ class _MypostState extends State<Mypost> {
       child: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _postList.isEmpty
-              ? const Center(child: Text('No posts available'))
-              : GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 2.0,
-                    mainAxisSpacing: 2.0,
-                    childAspectRatio: 1.0,
+              ? const Center(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(Icons.image_not_supported, size: 48, color: Colors.grey),
+                      SizedBox(height: 12),
+                      Text('No posts available', style: TextStyle(fontSize: 16, color: Colors.black54)),
+                    ],
                   ),
-                  itemCount: _postList.length,
-                  itemBuilder: (context, index) {
-                    final post = _postList[index];
-                    return Stack(
-                      children: [
-                        GestureDetector(
-                          onTap: () => _showPostDialog(context, post),
-                          child: Container(
-                            decoration: BoxDecoration(
-                              image: DecorationImage(
-                                image: NetworkImage(post['post_file']),
-                                fit: BoxFit.cover,
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          top: 5,
-                          right: 5,
-                          child: Container(
-                            width: 40,
-                            height: 40,
-                            decoration: BoxDecoration(
-                              shape: BoxShape.circle,
-                              color: Colors.black.withOpacity(0.3),
-                            ),
-                            child: PopupMenuButton<String>(
-                              icon: HugeIcon(
-                                icon: HugeIcons.strokeRoundedMoreVertical,
-                                color: Colors.white,
-                                size: 24.0,
-                              ),
-                              onSelected: (String result) {
-                                if (result == 'delete') {
-                                  delete(post['id']);
-                                }
-                              },
-                              itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
-                                const PopupMenuItem<String>(
-                                  value: 'delete',
-                                  child: Text('Delete'),
+                )
+              : Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: GridView.builder(
+                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 3,
+                      crossAxisSpacing: 2.0,
+                      mainAxisSpacing: 2.0,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: _postList.length,
+                    itemBuilder: (context, index) {
+                      final post = _postList[index];
+                      return Stack(
+                        children: [
+                          GestureDetector(
+                            onTap: () => _showPostDialog(context, post),
+                            child: Container(
+                              margin: const EdgeInsets.all(4),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black12,
+                                    blurRadius: 4,
+                                    offset: Offset(0, 2),
+                                  ),
+                                ],
+                                image: DecorationImage(
+                                  image: NetworkImage(post['post_file']),
+                                  fit: BoxFit.cover,
                                 ),
-                              ],
+                              ),
+                              foregroundDecoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(12),
+                                color: Colors.black.withOpacity(0.02),
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    );
-                  },
+                          Positioned(
+                            top: 8,
+                            right: 8,
+                            child: Container(
+                              width: 36,
+                              height: 36,
+                              decoration: BoxDecoration(
+                                shape: BoxShape.circle,
+                                color: Colors.black.withOpacity(0.35),
+                              ),
+                              child: PopupMenuButton<String>(
+                                icon: HugeIcon(
+                                  icon: HugeIcons.strokeRoundedMoreVertical,
+                                  color: Colors.white,
+                                  size: 20.0,
+                                ),
+                                onSelected: (String result) {
+                                  if (result == 'delete') {
+                                    delete(post['id']);
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) => <PopupMenuEntry<String>>[
+                                  const PopupMenuItem<String>(
+                                    value: 'delete',
+                                    child: Text('Delete'),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ],
+                      );
+                    },
+                  ),
                 ),
     );
   }

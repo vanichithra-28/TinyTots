@@ -3,14 +3,16 @@ import 'package:tinytots_admin/components/sidebar.dart';
 import 'package:tinytots_admin/components/appbar.dart';
 import 'package:tinytots_admin/screen/attendance.dart';
 import 'package:tinytots_admin/screen/classroom.dart';
+import 'package:tinytots_admin/screen/feedbacks.dart';
 import 'package:tinytots_admin/screen/home.dart';
 import 'package:tinytots_admin/screen/event.dart';
 import 'package:tinytots_admin/screen/manage_fee_structure.dart';
+
 import 'package:tinytots_admin/screen/manage_meals.dart';
 import 'package:tinytots_admin/screen/parent&child.dart';
-import 'package:tinytots_admin/screen/task.dart';
 import 'package:tinytots_admin/screen/admission.dart';
 import 'package:tinytots_admin/screen/manage_staff.dart';
+import 'package:tinytots_admin/screen/staff_attendance.dart';
 
 
 
@@ -32,8 +34,10 @@ class _DashboardState extends State<Dashboard> {
     Classroom(),
     Events(),
     AttendanceList(),
-    Fee_structure(),
+    FeeStructure(),
     ManageMeals(),
+    StaffAttendance(),
+    FeedbackReply()
   ];
 
   void onSidebarItemTapped(int index) {

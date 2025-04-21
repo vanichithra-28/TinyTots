@@ -1,6 +1,3 @@
-// ignore_for_file: sort_child_properties_last
-
-import 'dart:math';
 import 'package:intl/intl.dart';
 
 import 'package:flutter/material.dart';
@@ -16,7 +13,6 @@ class Task extends StatefulWidget {
 }
 
 class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
-  @override
   final TextEditingController taskController = TextEditingController();
   final TextEditingController endDateController = TextEditingController();
   List<Map<String, dynamic>> _taskList = [];
@@ -65,7 +61,8 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
       });
     }
   }
-   Future<void> delete(int delId) async {
+
+  Future<void> delete(int delId) async {
     try {
       await supabase.from('tbl_task').delete().eq('id', delId);
       display();
@@ -80,10 +77,12 @@ class _TaskState extends State<Task> with SingleTickerProviderStateMixin {
       print('ERROR IN DELETING$e');
     }
   }
-String formatDate(String timestamp) {
-  DateTime date = DateTime.parse(timestamp);
-  return DateFormat('dd-MM-yyyy').format(date); // Formats to YYYY-MM-DD
-}
+
+  String formatDate(String timestamp) {
+    DateTime date = DateTime.parse(timestamp);
+    return DateFormat('dd-MM-yyyy').format(date); // Formats to YYYY-MM-DD
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,154 +94,155 @@ String formatDate(String timestamp) {
     print("Staffid: ${widget.staffId}");
     return Scaffold(
       appBar: AppBar(
-       backgroundColor:Color(0xff3e53a0),
-        title: Text('Task',style: TextStyle(color: Color(0xffffffff)),),
+        backgroundColor: const Color(0xff3e53a0),
+        title: const Text('Task', style: TextStyle(color: Color(0xffffffff))),
+        elevation: 2,
       ),
-      backgroundColor: Color(0xFFeceef0),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(50.0),
-            child: Row(
-              children: [
-                Expanded(
-                  flex: 5,
-                  child: TextFormField(
-                    controller: taskController,
-                    decoration: InputDecoration(
-                      labelText: 'Task',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                Expanded(
-                  flex: 2,
-                  child: TextFormField(
-                    controller: endDateController,
-                    decoration: InputDecoration(
-                      labelText: 'End Date',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(3),
-                      ),
-                    ),
-                    readOnly: true,
-                    onTap: () => _selectDate(context),
-                  ),
-                ),
-                SizedBox(
-                  width: 10,
-                ),
-                ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                        backgroundColor: Color(0xff3e53a0),
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(4))),
-                    onPressed: () {
-                      insert();
-                    },
-                    child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),))
-              ],
+      backgroundColor: const Color(0xFFeceef0),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const Text(
+              "Assign Task",
+              style: TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff3e53a0),
+              ),
             ),
-          ),
-          SizedBox(
-            height: 5,
-          ),
-          Center(
-            child: Container(
-                width: 1000,
-                padding: EdgeInsets.all(16), // Padding inside the container
-                margin: EdgeInsets.all(16), // Margin outside the container
+            const SizedBox(height: 18),
+            Card(
+              elevation: 3,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+              child: Padding(
+                padding: const EdgeInsets.all(20),
+                child: Row(
+                  children: [
+                    Expanded(
+                      flex: 5,
+                      child: TextFormField(
+                        controller: taskController,
+                        decoration: const InputDecoration(
+                          labelText: 'Task',
+                          border: OutlineInputBorder(),
+                        ),
+                        validator: (value) =>
+                            value == null || value.isEmpty ? 'Enter a task' : null,
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    Expanded(
+                      flex: 2,
+                      child: TextFormField(
+                        controller: endDateController,
+                        decoration: const InputDecoration(
+                          labelText: 'End Date',
+                          border: OutlineInputBorder(),
+                          suffixIcon: Icon(Icons.calendar_today),
+                        ),
+                        readOnly: true,
+                        onTap: () => _selectDate(context),
+                      ),
+                    ),
+                    const SizedBox(width: 16),
+                    ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xff3e53a0),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 16),
+                      ),
+                      onPressed: () {
+                        if (taskController.text.isNotEmpty &&
+                            endDateController.text.isNotEmpty) {
+                          insert();
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please enter all fields"),
+                              backgroundColor: Colors.red,
+                            ),
+                          );
+                        }
+                      },
+                      icon: const Icon(Icons.send, color: Color(0xFFeceef0)),
+                      label: const Text('Submit', style: TextStyle(color: Color(0xFFeceef0))),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            const SizedBox(height: 32),
+            const Divider(thickness: 1.5),
+            const SizedBox(height: 12),
+            const Text(
+              "Task List",
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+                color: Color(0xff3e53a0),
+              ),
+            ),
+            const SizedBox(height: 12),
+            Expanded(
+              child: Container(
+                width: double.infinity,
                 decoration: BoxDecoration(
-                  color: Color(0xffffffff), // Background color of the container
-                  borderRadius: BorderRadius.zero, // Rounded corners
+                  color: const Color(0xffffffff),
+                  borderRadius: BorderRadius.circular(10),
                   border: Border.all(
-                    color: Color(0xFFeceef0), // Border color
-                    width: 2, // Border width
+                    color: const Color(0xFFeceef0),
+                    width: 2,
                   ),
                 ),
                 child: SingleChildScrollView(
-                    child: DataTable(
-                  columns: [
-                    DataColumn(
-                        label: Text('Sl.No',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                    DataColumn(
-                        label: Text('Task',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                    DataColumn(
-                        label: Text('Start Date',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                    DataColumn(
-                        label: Text('End Date',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                    DataColumn(
-                        label: Text('Status',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                    DataColumn(
-                        label: Text('Action',
-                            style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                color: Color(0xff252422)))),
-                  ],
-                  rows: _taskList.asMap().entries.map((entry) {
-                    return DataRow(cells: [
-                      DataCell(Text(
-                        (entry.key + 1).toString(),
-                        style: TextStyle(color: Color(0xff252422)),
-                      )),
-                      DataCell(Text(
-                        entry.value['task'],
-                        style: TextStyle(color: Color(0xff252422)),
-                      )),
-                      DataCell(Text(formatDate(entry.value['created_at'])
-                        ,
-                        style: TextStyle(color: Color(0xff252422)),
-                      )),
-                      DataCell(Text(formatDate(entry.value['end_date'])
-                        ,
-                        style: TextStyle(color: Color(0xff252422)),
-                      )),
-                      DataCell(entry.value['status'] == 1
-                          ? Text(
-                              'Completed',
-                              style: TextStyle(color: Colors.green),
+                  scrollDirection: Axis.horizontal,
+                  child: DataTable(
+                    columns: const [
+                      DataColumn(label: Text('Sl.No', style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(label: Text('Task', style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(label: Text('Start Date', style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(label: Text('End Date', style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(label: Text('Status', style: TextStyle(fontWeight: FontWeight.bold))),
+                      DataColumn(label: Text('Action', style: TextStyle(fontWeight: FontWeight.bold))),
+                    ],
+                    rows: _taskList.asMap().entries.map((entry) {
+                      final status = entry.value['status'] == 1
+                          ? Chip(
+                              label: const Text('Completed'),
+                              backgroundColor: Colors.green.shade100,
+                              labelStyle: const TextStyle(color: Colors.green),
                             )
-                          : Text(
-                             'Pending',
-                              style: TextStyle(color: Colors.red),
-                            )),
-                      DataCell(IconButton(
-                    icon: Icon(Icons.delete),
-                    onPressed: () {
-                      delete(entry.value['id']);
-                    },
-                  )),
-                    ]);
-                  }).toList(),
-                ))),
-          )
-        ],
+                          : Chip(
+                              label: const Text('Pending'),
+                              backgroundColor: Colors.red.shade100,
+                              labelStyle: const TextStyle(color: Colors.red),
+                            );
+                      return DataRow(cells: [
+                        DataCell(Text((entry.key + 1).toString())),
+                        DataCell(Text(entry.value['task'] ?? '')),
+                        DataCell(Text(formatDate(entry.value['created_at']))),
+                        DataCell(Text(formatDate(entry.value['end_date']))),
+                        DataCell(status),
+                        DataCell(
+                          IconButton(
+                            icon: const Icon(Icons.delete, color: Colors.red),
+                            onPressed: () {
+                              delete(entry.value['id']);
+                            },
+                          ),
+                        ),
+                      ]);
+                    }).toList(),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

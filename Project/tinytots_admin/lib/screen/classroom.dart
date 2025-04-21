@@ -109,7 +109,17 @@ class _ClassroomState extends State<Classroom>
       child: Container(
         height: 600,
         width: 1000,
-        color: const Color(0xffffffff),
+         decoration: BoxDecoration(
+                          color: Color(0xffffffff),
+                          borderRadius: BorderRadius.circular(16),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black12,
+                              blurRadius: 8,
+                              offset: Offset(0, 2),
+                            ),
+                          ],
+                        ),
         child: Column(
           children: [
             TabBar(

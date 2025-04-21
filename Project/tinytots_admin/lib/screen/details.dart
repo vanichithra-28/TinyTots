@@ -132,44 +132,41 @@ class _DetailsState extends State<Details> {
         ],
       );
     } else if (isPdf) {
-      return Padding(
-        padding: const EdgeInsets.only(left: 200.0),
-        child: Row(
-          children: [
-            Text(
-              "Documents:",
-              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500),
-            ),
-            SizedBox(width: 5),
-            GestureDetector(
-              onTap: () async {
-                final Uri uri = Uri.parse(documentUrl);
-                if (await canLaunchUrl(uri)) {
-                  await launchUrl(uri, mode: LaunchMode.externalApplication);
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Cannot open document")),
-                  );
-                }
-              },
-              child: Row(
-                children: [
-                  Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
-                  SizedBox(width: 5),
-                  Text(
-                    "View PDF",
-                    style: TextStyle(
-                      fontSize: 15,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.blue,
-                      decoration: TextDecoration.underline,
-                    ),
+      return Row(
+        children: [
+          Text(
+            "Documents:",
+            style: TextStyle(fontSize: 15, fontWeight: FontWeight. bold),
+          ),
+          SizedBox(width: 5),
+          GestureDetector(
+            onTap: () async {
+              final Uri uri = Uri.parse(documentUrl);
+              if (await canLaunchUrl(uri)) {
+                await launchUrl(uri, mode: LaunchMode.externalApplication);
+              } else {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(content: Text("Cannot open document")),
+                );
+              }
+            },
+            child: Row(
+              children: [
+                Icon(Icons.picture_as_pdf, color: Colors.red, size: 20),
+                SizedBox(width: 5),
+                Text(
+                  "View PDF",
+                  style: TextStyle(
+                    fontSize: 15,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.blue,
+                    decoration: TextDecoration.underline,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       );
     } else {
       return Padding(
@@ -208,139 +205,137 @@ class _DetailsState extends State<Details> {
     }
   }
 
+  // Helper for detail rows
+  Widget _detailRow(String label, String value) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4),
+      child: Row(
+        children: [
+          SizedBox(
+            width: 140,
+            child: Text(
+              "$label:",
+              style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+            ),
+          ),
+          Flexible(
+            child: Text(
+              value,
+              style: const TextStyle(fontSize: 16),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Color(0xFFeceef0),
+      backgroundColor: const Color(0xFFeceef0),
       appBar: AppBar(
-        backgroundColor: Color(0xff3e53a0),
-        title: Text(
-          'Details',
-          style: TextStyle(color: Color(0xffffffff)),
-        ),
+        backgroundColor: const Color(0xff3e53a0),
+        title: const Text('Details', style: TextStyle(color: Color(0xffffffff))),
       ),
       body: Center(
-        child: SingleChildScrollView(
-          child: Container(
-            width: 800,
-            height: 600,
-            decoration: BoxDecoration(
-              color: Color(0xffffffff),
-              border: Border.all(
-                color: Color(0xFFeceef0),
-                width: 2,
-              ),
-            ),
-            child: Row(
-              children: [
-                Expanded(
-                  child: Column(
-                    children: [
-                      SizedBox(height: 130),
-                      CircleAvatar(
-                        radius: 120,
-                        backgroundImage:
-                            NetworkImage(studentData['photo'] ?? "NA"),
-                        backgroundColor: Colors.grey,
-                      ),
-                    ],
+        child: isLoading
+            ? const CircularProgressIndicator()
+            : SingleChildScrollView(
+                child: Card(
+                  elevation: 6,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(18),
                   ),
-                ),
-                Expanded(
-                  flex: 2,
-                  child: Column(
-                    children: [
-                      SizedBox(height: 150),
-                      Text(
-                        "Name: ${studentData['name'] ?? 'N/A'}",
-                        style: TextStyle(
-                            fontSize: 20, fontWeight: FontWeight.bold),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Age: ${studentData['age'] ?? 'N/A'} months",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "Gender: ${studentData['gender'] ?? 'N/A'}",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        "DOB: ${studentData['dob'] ?? 'N/A'}",
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
-                      SizedBox(height: 10),
-                      buildDocumentDisplay(), // Replaced the original Text widget
-                      SizedBox(height: 10),
-                      Text(
-                        studentData['doj'] != null
-                            ? formatDate(studentData['doj'].toString())
-                            : 'No doj',
-                        style: TextStyle(
-                            fontSize: 15, fontWeight: FontWeight.w500),
-                      ),
-                      if (studentData['status'] == 0)
-                        Padding(
-                          padding:
-                              const EdgeInsets.symmetric(horizontal: 20),
-                          child: Row(
+                  margin: const EdgeInsets.all(32),
+                  child: Container(
+                    width: 800,
+                    padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 36),
+                    child: Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Profile photo
+                        Column(
+                          children: [
+                            CircleAvatar(
+                              radius: 70,
+                              backgroundImage: NetworkImage(studentData['photo'] ?? ""),
+                              backgroundColor: Colors.grey.shade200,
+                            ),
+                            const SizedBox(height: 18),
+                            Text(
+                              studentData['name'] ?? 'N/A',
+                              style: const TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff3e53a0),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(width: 40),
+                        // Details
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              SizedBox(width: 125),
-                              Padding(
-                                padding: const EdgeInsets.all(10.0),
-                                child: Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xff3e53a0),
-                                        shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4))),
-                                    onPressed: () {
-                                      approve();
-                                    },
-                                    child: Text(
-                                      'Approve',
-                                      style:
-                                          TextStyle(color: Color(0xFFeceef0)),
-                                    ),
-                                  ),
+                              const Text(
+                                "Student Details",
+                                style: TextStyle(
+                                  fontSize: 20,
+                                  fontWeight: FontWeight.bold,
+                                  color: Color(0xff3e53a0),
                                 ),
                               ),
-                              Padding(
-                                padding: const EdgeInsets.all(15.0),
-                                child: Expanded(
-                                  child: ElevatedButton(
-                                    style: ElevatedButton.styleFrom(
-                                        backgroundColor: Color(0xff3e53a0),
+                              const Divider(thickness: 1.2),
+                              const SizedBox(height: 10),
+                              _detailRow("Age", "${studentData['age'] ?? 'N/A'} months"),
+                              _detailRow("Gender", studentData['gender'] ?? 'N/A'),
+                              _detailRow("DOB", studentData['dob'] ?? 'N/A'),
+                              _detailRow("Date of Joining", studentData['doj'] != null
+                                  ? formatDate(studentData['doj'].toString())
+                                  : 'N/A'),
+                              const SizedBox(height: 18),
+                              buildDocumentDisplay(),
+                              const SizedBox(height: 28),
+                              if (studentData['status'] == 0)
+                                Row(
+                                  mainAxisAlignment: MainAxisAlignment.center,
+                                  children: [
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.green.shade700,
                                         shape: RoundedRectangleBorder(
-                                            borderRadius:
-                                                BorderRadius.circular(4))),
-                                    onPressed: () {
-                                      reject();
-                                    },
-                                    child: Text(
-                                      'Reject ',
-                                      style:
-                                          TextStyle(color: Color(0xFFeceef0)),
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                      ),
+                                      onPressed: approve,
+                                      icon: const Icon(Icons.check, color: Colors.white),
+                                      label: const Text('Approve', style: TextStyle(color: Colors.white)),
                                     ),
-                                  ),
+                                    const SizedBox(width: 24),
+                                    ElevatedButton.icon(
+                                      style: ElevatedButton.styleFrom(
+                                        backgroundColor: Colors.red.shade700,
+                                        shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.circular(8),
+                                        ),
+                                        padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 14),
+                                      ),
+                                      onPressed: reject,
+                                      icon: const Icon(Icons.close, color: Colors.white),
+                                      label: const Text('Reject', style: TextStyle(color: Colors.white)),
+                                    ),
+                                  ],
                                 ),
-                              ),
                             ],
                           ),
                         ),
-                    ],
+                      ],
+                    ),
                   ),
                 ),
-              ],
-            ),
-          ),
-        ),
+              ),
       ),
     );
   }

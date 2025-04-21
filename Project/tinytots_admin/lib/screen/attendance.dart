@@ -174,41 +174,121 @@ class _AttendanceListState extends State<AttendanceList> {
 
   @override
   Widget build(BuildContext context) {
+    final monthLabel = DateFormat('MMMM yyyy').format(DateTime.now());
     return SingleChildScrollView(
-      child: Row(
-        children: [
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 400,
-                color: const Color(0xffffffff),
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : errorMessage != null
-                        ? Center(child: Text(errorMessage!))
-                        : buildPieChart(dailyAttendance, 'Daily Attendance'),
-              ),
-            ),
-          ),
-          Expanded(
-            child: Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: Container(
-                height: 400,
-                color: const Color(0xffffffff),
-                child: isLoading
-                    ? const Center(child: CircularProgressIndicator())
-                    : errorMessage != null
-                        ? Center(child: Text(errorMessage!))
-                        : buildPieChart(
-                            monthlyAttendance,
-                            'Monthly Attendance (${DateFormat('MMMM yyyy').format(DateTime.now())})',
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                color: const Color(0xfff4f6fa),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 450,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.today, color: Color(0xff3e53a0), size: 28),
+                            SizedBox(width: 10),
+                            Text(
+                              'Daily Attendance',
+                              style: TextStyle(
+                                color: Color(0xff3e53a0),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Divider(),
+                        Expanded(
+                          child: isLoading
+                              ? Center(child: CircularProgressIndicator())
+                              : errorMessage != null
+                                  ? Center(child: Text(errorMessage!))
+                                  : buildPieChart(dailyAttendance, 'Today'),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Total: ${dailyAttendance.values.fold(0, (a, b) => a + b)}',
+                          style: TextStyle(
+                            color: Color(0xff3e53a0),
+                            fontWeight: FontWeight.w600,
                           ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
-          ),
-        ],
+            SizedBox(width: 24),
+            Expanded(
+              child: Card(
+                elevation: 6,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(18),
+                ),
+                color: const Color(0xfff4f6fa),
+                child: Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: SizedBox(
+                    height: 450,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Row(
+                          children: [
+                            Icon(Icons.calendar_month, color: Color(0xff3e53a0), size: 28),
+                            SizedBox(width: 10),
+                            Text(
+                              'Monthly Attendance',
+                              style: TextStyle(
+                                color: Color(0xff3e53a0),
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          monthLabel,
+                          style: TextStyle(
+                            color: Color(0xff7b7b7b),
+                            fontSize: 14,
+                          ),
+                        ),
+                        Divider(),
+                        Expanded(
+                          child: buildPieChart(monthlyAttendance, ''),
+                        ),
+                        SizedBox(height: 10),
+                        Text(
+                          'Total: ${monthlyAttendance.values.fold(0, (a, b) => a + b)}',
+                          style: TextStyle(
+                            color: Color(0xff3e53a0),
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -3,7 +3,8 @@ import 'package:hugeicons/hugeicons.dart';
 import 'package:lottie/lottie.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:tinytots_parent/screen/dashboard_content.dart';
-import 'package:tinytots_parent/screen/menu.dart';
+import 'package:tinytots_parent/screen/intro.dart';
+
 import 'package:tinytots_parent/screen/posts.dart';
 import 'package:tinytots_parent/screen/profile.dart';
 
@@ -23,7 +24,7 @@ class _DashboardState extends State<Dashboard> {
     "Dashboard",
     "Profile",
     "Post",
-    "Menu",
+    
   ];
 
   @override
@@ -33,7 +34,7 @@ class _DashboardState extends State<Dashboard> {
     paymentCheck();
   }
 
-  List<Widget> pages = [DashboardContent(), Profile(), Posts(), Menu()];
+  List<Widget> pages = [DashboardContent(), Profile(), Posts(),];
   Future<void> paymentCheck() async {
   try {
     final now = DateTime.now();
@@ -147,10 +148,38 @@ class _DashboardState extends State<Dashboard> {
         backgroundColor: Color(0xFFFFFFFF),
         currentIndex: _selectedIndex,
         showSelectedLabels: false,
-        onTap: (value) {
-          setState(() {
-            _selectedIndex = value;
-          });
+        onTap: (value) async {
+          if (value == 3) {
+            // Show confirmation dialog before logout
+            final shouldLogout = await showDialog<bool>(
+              context: context,
+              builder: (context) => AlertDialog(
+                title: const Text('Logout'),
+                content: const Text('Are you sure you want to logout?'),
+                actions: [
+                  TextButton(
+                    child: const Text('Cancel', style: TextStyle(color: Colors.grey)),
+                    onPressed: () => Navigator.pop(context, false),
+                  ),
+                  TextButton(
+                    child: const Text('Logout', style: TextStyle(color: Color(0xFFbc6c25))),
+                    onPressed: () => Navigator.pop(context, true),
+                  ),
+                ],
+              ),
+            );
+            if (shouldLogout == true) {
+              // TODO: Add your logout logic here (e.g., clear auth/session)
+              Navigator.pushReplacement(
+                context,
+                MaterialPageRoute(builder: (context) => Intro()),
+              );
+            }
+          } else {
+            setState(() {
+              _selectedIndex = value;
+            });
+          }
         },
         type: BottomNavigationBarType.fixed,
         items: [
@@ -180,7 +209,7 @@ class _DashboardState extends State<Dashboard> {
           ),
           BottomNavigationBarItem(
             icon: HugeIcon(
-              icon: HugeIcons.strokeRoundedMenu02,
+              icon: HugeIcons.strokeRoundedLogout03,
               color: Colors.black,
               size: 30.0,
             ),

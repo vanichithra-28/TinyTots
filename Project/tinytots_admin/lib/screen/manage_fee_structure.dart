@@ -1,24 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:tinytots_admin/main.dart';
 
-class Fee_structure extends StatefulWidget {
-  const Fee_structure({super.key});
+class FeeStructure extends StatefulWidget {
+  const FeeStructure({super.key});
 
   @override
-  State<Fee_structure> createState() => _Fee_structureState();
+  State<FeeStructure> createState() => _FeeStructureState();
 }
 
-class _Fee_structureState extends State<Fee_structure>
+class _FeeStructureState extends State<FeeStructure>
     with SingleTickerProviderStateMixin {
   bool _isFormVisible = false;
-  @override
-  // ignore: override_on_non_overriding_member
   final Duration _animationDuration = const Duration(milliseconds: 300);
   final TextEditingController amountController = TextEditingController();
   final TextEditingController detailsController = TextEditingController();
   String _selectedFeeName = 'Full';
   List<Map<String, dynamic>> _feesList = [];
   int _editId = 0;
+
   Future<void> feeSubmit() async {
     if (_feesList.length >= 3) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
@@ -36,7 +35,7 @@ class _Fee_structureState extends State<Fee_structure>
       fetchFees();
       amountController.clear();
       detailsController.clear();
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text("Inserted"),
       ));
     } catch (e) {
@@ -46,9 +45,9 @@ class _Fee_structureState extends State<Fee_structure>
 
   Future<void> fetchFees() async {
     try {
-      final reponse = await supabase.from('tbl_fees').select();
+      final response = await supabase.from('tbl_fees').select();
       setState(() {
-        _feesList = reponse;
+        _feesList = response;
       });
     } catch (e) {
       print("ERROR FETCHING FEES DATA:$e");
@@ -56,6 +55,25 @@ class _Fee_structureState extends State<Fee_structure>
   }
 
   void deleteFees(int feeId) async {
+    final confirm = await showDialog<bool>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text("Delete Fee"),
+        content: const Text("Are you sure you want to delete this fee entry?"),
+        actions: [
+          TextButton(
+            child: const Text("Cancel"),
+            onPressed: () => Navigator.pop(context, false),
+          ),
+          TextButton(
+            child: const Text("Delete", style: TextStyle(color: Colors.red)),
+            onPressed: () => Navigator.pop(context, true),
+          ),
+        ],
+      ),
+    );
+    if (confirm != true) return;
+
     try {
       await supabase.from('tbl_fees').delete().eq('id', feeId);
       fetchFees();
@@ -66,7 +84,6 @@ class _Fee_structureState extends State<Fee_structure>
         ),
         backgroundColor: Colors.green,
       ));
-    
     } catch (e) {
       print("ERROR DELETING FEES DATA:$e");
     }
@@ -80,18 +97,16 @@ class _Fee_structureState extends State<Fee_structure>
         'fee_name': _selectedFeeName,
       }).eq('id', _editId);
       fetchFees();
-      amountController.clear;
-      detailsController.clear;
-      
+      amountController.clear();
+      detailsController.clear();
       _editId = 0;
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text(
-          "File type Updated",
+          "Fee type Updated",
           style: TextStyle(color: Colors.white),
         ),
         backgroundColor: Colors.green,
       ));
-      fetchFees();
     } catch (e) {
       print("ERROR UPDATING FILETYPE:$e");
     }
@@ -99,206 +114,213 @@ class _Fee_structureState extends State<Fee_structure>
 
   @override
   void initState() {
-    // TODO: implement initState
     super.initState();
     fetchFees();
   }
 
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+  Widget _buildForm() {
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 16, horizontal: 24),
+      elevation: 4,
+      child: Padding(
+        padding: const EdgeInsets.all(20),
+        child: Column(
           children: [
-            
-            Padding(
-              padding: const EdgeInsets.only(left: 1100,top: 20),
-              
-              child: ElevatedButton.icon(
-                 style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff3e53a0),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    controller: amountController,
+                    decoration: const InputDecoration(
+                      labelText: 'Fee Amount',
+                      border: OutlineInputBorder(),
+                    ),
+                    keyboardType: TextInputType.number,
+                  ),
+                ),
+                const SizedBox(width: 16),
+                Expanded(
+                  child: TextFormField(
+                    controller: detailsController,
+                    decoration: const InputDecoration(
+                      labelText: 'Fee Details',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 16),
+            Row(
+              children: [
+                const Text("Fee Name: "),
+                ...['Full', 'Half', 'Daily'].map((fee) => Row(
+                  children: [
+                    Radio(
+                      value: fee,
+                      groupValue: _selectedFeeName,
+                      onChanged: (value) {
+                        setState(() => _selectedFeeName = value.toString());
+                      },
+                    ),
+                    Text(fee),
+                  ],
+                )),
+                const Spacer(),
+                ElevatedButton.icon(
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: const Color(0xff3e53a0),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4))),
-                onPressed: () {
-                  setState(() {
-                    _isFormVisible = !_isFormVisible; // Toggle form visibility
-                  });
-                },
-                label: Text(_isFormVisible ? "Cancel" : "Add ",style: TextStyle(color: Color(0xFFeceef0)),),
-                icon: Icon(
-                  _isFormVisible ? Icons.cancel : Icons.add,
-                  color: Color(0xFFeceef0),
+                      borderRadius: BorderRadius.circular(4),
+                    ),
+                  ),
+                  onPressed: () {
+                    if (_editId != 0) {
+                      updateFees();
+                    } else {
+                      feeSubmit();
+                    }
+                    setState(() {
+                      _isFormVisible = false;
+                      _editId = 0;
+                    });
+                  },
+                  icon: const Icon(Icons.save, color: Color(0xFFeceef0)),
+                  label: Text(
+                    _editId != 0 ? 'Update' : 'Submit',
+                    style: const TextStyle(color: Color(0xFFeceef0)),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildFeeList() {
+    if (_feesList.isEmpty) {
+      return const Padding(
+        padding: EdgeInsets.all(32.0),
+        child: Center(child: Text("No fee entries found.")),
+      );
+    }
+    return ListView.builder(
+      shrinkWrap: true,
+      itemCount: _feesList.length,
+      itemBuilder: (context, index) {
+        final fee = _feesList[index];
+        return Card(
+          margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 24),
+          elevation: 2,
+          child: ListTile(
+            leading: CircleAvatar(
+              backgroundColor: const Color(0xff3e53a0),
+              child: Text(
+                "${index + 1}",
+                style: const TextStyle(color: Colors.white),
+              ),
+            ),
+            title: Text(
+              "₹${fee['fee_amount']} - ${fee['fee_name']}",
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            subtitle: Text(fee['fee_details']),
+            trailing: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                IconButton(
+                  icon: const Icon(Icons.edit, color: Colors.green),
+                  onPressed: () {
+                    setState(() {
+                      _editId = fee['id'];
+                      amountController.text = fee['fee_amount'];
+                      detailsController.text = fee['fee_details'];
+                      _selectedFeeName = fee['fee_name'];
+                      _isFormVisible = true;
+                    });
+                  },
+                ),
+                IconButton(
+                  icon: const Icon(Icons.delete, color: Colors.red),
+                  onPressed: () => deleteFees(fee['id']),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: 24),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            // Header and Add Button
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                 
+                  ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xff3e53a0),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _isFormVisible = !_isFormVisible;
+                        if (!_isFormVisible) {
+                          _editId = 0;
+                          amountController.clear();
+                          detailsController.clear();
+                          _selectedFeeName = 'Full';
+                        }
+                      });
+                    },
+                    icon: Icon(
+                      _isFormVisible ? Icons.cancel : Icons.add,
+                      color: const Color(0xFFeceef0),
+                    ),
+                    label: Text(
+                      _isFormVisible ? "Cancel" : "Add",
+                      style: const TextStyle(color: Color(0xFFeceef0)),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            AnimatedSize(
+              duration: _animationDuration,
+              curve: Curves.easeInOut,
+              child: _isFormVisible ? _buildForm() : Container(),
+            ),
+            const SizedBox(height: 16),
+            const Padding(
+              padding: EdgeInsets.symmetric(horizontal: 24),
+              child: Text(
+                "Fee Details",
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Color(0xff252422),
                 ),
               ),
             ),
-            SizedBox(
-              height: 5.00,
-            )
+            const SizedBox(height: 8),
+            _buildFeeList(),
           ],
         ),
-        AnimatedSize(
-          duration: _animationDuration,
-          curve: Curves.easeInOut,
-          child: _isFormVisible
-              ? Form(
-                  child: Column(
-                  children: [
-                    Form(
-                        child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Container(
-                        height: 100,
-                        child: Row(
-                          children: [
-                            Expanded(
-                                child: TextFormField(
-                              controller: amountController,
-                              decoration: InputDecoration(
-                                labelText: 'Fee Amount',
-                                border: UnderlineInputBorder(
-                                    borderRadius: BorderRadius.zero),
-                              ),
-                            )),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Expanded(
-                                child: TextFormField(
-                              controller: detailsController,
-                              decoration: InputDecoration(
-                                labelText: 'Fee Details',
-                                border: UnderlineInputBorder(
-                                    borderRadius: BorderRadius.zero),
-                              ),
-                            )),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            Row(
-                  children: [
-                    const Text("Fee Name: "),
-                    for (var fee in ['Full', 'Half', 'Daily'])
-                      Row(
-                        children: [
-                          Radio(
-                            value: fee,
-                            groupValue: _selectedFeeName,
-                            onChanged: (value) {
-                              setState(() => _selectedFeeName = value.toString());
-                            },
-                          ),
-                          Text(fee),
-                        ],
-                      ),
-                  ],
-                ),
-                            SizedBox(
-                              width: 10,
-                            ),
-                            ElevatedButton(
-                               style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xff3e53a0),
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(4))),
-                                onPressed: () {
-                                  if (_editId != 0) {
-                                    updateFees();
-                                    _isFormVisible = false;
-                                  } else {
-                                    feeSubmit();
-                                    _isFormVisible = false;
-                                  }
-                                },
-                                child: Text('submit',style: TextStyle(color: Color(0xFFeceef0)),)),
-                          ],
-                        ),
-                      ),
-                    )),
-                  ],
-                ))
-              : Container(),
-        ),
-        SizedBox(
-          height: 20,
-        ),
-        Text("FEE DETAILS",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold,color: Color(0xff252422))),
-        SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Container(
-              padding: EdgeInsets.all(16), // Padding inside the container
-              margin: EdgeInsets.all(16), // Margin outside the container
-              decoration: BoxDecoration(
-                color: Color(0xffffffff), // Background color of the container
-                border: Border.all(
-                  color: Color(0xFFeceef0), // Border color
-                  width: 2, // Border width
-                ),
-                
-              ),
-              child: DataTable(
-                columns: [
-                  DataColumn(
-                      label: Text("Sl.No",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                  DataColumn(
-                      label: Text("Fees amount",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                  DataColumn(
-                      label: Text("Fees details",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                  DataColumn(
-                      label: Text("Fees name",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                  DataColumn(
-                      label: Text("Delete",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                  DataColumn(
-                      label: Text("Edit",
-                          style: TextStyle(
-                              fontSize: 16, fontWeight: FontWeight.bold,color: Color(0xff252422)))),
-                ],
-                rows: _feesList.asMap().entries.map((entry) {
-                  return DataRow(cells: [
-                    DataCell(Text((entry.key + 1).toString(),style:TextStyle(
-                              color: Color(0xff252422)) ,)),
-                    DataCell(Text(entry.value['fee_amount'],style:TextStyle(
-                              color: Color(0xff252422)) ,),),
-                    DataCell(Text(entry.value['fee_details'],style:TextStyle(
-                              color: Color(0xff252422)) ,)),
-                    DataCell(Text(entry.value['fee_name'],style:TextStyle(
-                              color: Color(0xff252422)) ,)),
-                    DataCell(
-                      IconButton(
-                        onPressed: () {
-                          deleteFees(entry.value['id']);
-                        },
-                        icon: Icon(Icons.delete, color: Colors.red),
-                      ),
-                    ),
-                    DataCell(IconButton(
-                        onPressed: () {
-                          setState(() {
-                            _editId = entry.value['id'];
-                            amountController.text = entry.value['fee_amount'];
-                            detailsController.text = entry.value['fee_details'];
-                            _isFormVisible = true;
-                          });
-                        },
-                        icon: Icon(
-                          Icons.edit,
-                          color: Colors.green,
-                        ))),
-                  ]);
-                }).toList(),
-              ),
-            ))
-      ],
+      ),
     );
   }
 }
