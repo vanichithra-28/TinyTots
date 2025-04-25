@@ -43,92 +43,118 @@ class _EventsState extends State<Events> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Events'),
-        backgroundColor: Color(0xFFffffff),
+        title: const Text(
+          'Events',
+          style: TextStyle(
+            color: Color(0xFF22223b),
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        backgroundColor: Colors.white,
+        elevation: 1,
+        iconTheme: const IconThemeData(color: Color(0xFF22223b)),
+        centerTitle: true,
       ),
-      backgroundColor: Color(0xFFf8f9fa),
-      body: Column(
-        children: [
-          Expanded(
-            child: _eventList.isEmpty
-                ? Center(
-                    child: Text(
-                      'No upcoming events.',
-                      style: TextStyle(
-                        color: Colors.grey,
-                        fontSize: 18,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  )
-                : GridView.builder(
-                    shrinkWrap: true,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 1,
-                      crossAxisSpacing: 20.0,
-                      mainAxisSpacing: 25.0,
-                      childAspectRatio: 1.3,
-                    ),
-                    itemCount: _eventList.length,
-                    itemBuilder: (context, index) {
-                      final event = _eventList[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => EventParticipation(eventId: event['id']),
-                            ),
-                          );
-                        },
-                        child: Card(
-                          color: Color(0xFFeceef0),
-                          child: Column(
-                            children: [
-                              Stack(
-                                children: [
-                                  Container(
-                                    height: 250,
-                                    decoration: BoxDecoration(
-                                      border: Border.all(color: Color(0xffadc178), width: 2.5),
-                                      image: DecorationImage(
-                                        image: NetworkImage(event['event_photo']),
-                                        fit: BoxFit.fill,
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              SizedBox(height: 10),
-                              Row(
-                                children: [
-                                  SizedBox(width: 15),
-                                  Expanded(
-                                    child: Text(
-                                      event['event_name'],
-                                      style: TextStyle(
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: Text(
-                                      event['event_date'],
-                                      style: TextStyle(
-                                        color: Color(0xff000000),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              )
-                            ],
-                          ),
+      backgroundColor: const Color(0xFFf8f9fa),
+      body: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10),
+        child: _eventList.isEmpty
+            ? const Center(
+                child: Text(
+                  'No upcoming events.',
+                  style: TextStyle(
+                    color: Colors.grey,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              )
+            : ListView.separated(
+                itemCount: _eventList.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 18),
+                itemBuilder: (context, index) {
+                  final event = _eventList[index];
+                  final eventDate = DateTime.tryParse(event['event_date'] ?? '');
+                  final formattedDate = eventDate != null
+                      ? "${eventDate.day}/${eventDate.month}/${eventDate.year}"
+                      : event['event_date'] ?? '';
+                  return GestureDetector(
+                    onTap: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => EventParticipation(eventId: event['id']),
                         ),
                       );
                     },
-                  ),
-          ),
-        ],
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(18),
+                      ),
+                      elevation: 4,
+                      color: const Color(0xFFeceef0),
+                      child: Padding(
+                        padding: const EdgeInsets.all(12.0),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            ClipRRect(
+                              borderRadius: BorderRadius.circular(14),
+                              child: event['event_photo'] != null && event['event_photo'].toString().isNotEmpty
+                                  ? Image.network(
+                                      event['event_photo'],
+                                      height: 180,
+                                      width: double.infinity,
+                                      fit: BoxFit.cover,
+                                      errorBuilder: (context, error, stackTrace) => Container(
+                                        height: 180,
+                                        color: Colors.grey[300],
+                                        child: const Icon(Icons.event, size: 60, color: Colors.grey),
+                                      ),
+                                    )
+                                  : Container(
+                                      height: 180,
+                                      color: Colors.grey[300],
+                                      child: const Icon(Icons.event, size: 60, color: Colors.grey),
+                                    ),
+                            ),
+                            const SizedBox(height: 14),
+                            Text(
+                              event['event_name'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff22223b),
+                              ),
+                            ),
+                             Text(
+                              event['event_details'] ?? '',
+                              style: const TextStyle(
+                                fontSize: 16,
+                                color: Color(0xff22223b),
+                              ),
+                            ),
+                            const SizedBox(height: 6),
+                            Row(
+                              children: [
+                                const Icon(Icons.calendar_today, size: 18, color: Color(0xffadc178)),
+                                const SizedBox(width: 8),
+                                Text(
+                                  formattedDate,
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    color: Color(0xff4a4e69),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              ),
       ),
     );
   }

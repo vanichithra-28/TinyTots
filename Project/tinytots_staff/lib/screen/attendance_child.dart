@@ -84,7 +84,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
                   },
                   icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedBaby01,
-                    color: Colors.brown[700]!,
+                    color: Colors.black,
                     size: 70.0,
                   ),
                   label: "",
@@ -98,7 +98,7 @@ class _AttendanceChildState extends State<AttendanceChild> {
                   },
                   icon: HugeIcon(
                     icon: HugeIcons.strokeRoundedChild,
-                    color: Colors.brown[700]!,
+                    color: Colors.black,
                     size: 70.0,
                   ),
                   label: "",

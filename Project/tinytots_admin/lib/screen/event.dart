@@ -72,7 +72,7 @@ class _EventsState extends State<Events> {
         ));
       } else {
         print("Event not given");
-      }
+      } 
       await display();
       _nameController.clear();
       _dateController.clear();

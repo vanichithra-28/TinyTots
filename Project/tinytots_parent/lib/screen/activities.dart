@@ -52,12 +52,15 @@ class _ActivitiesState extends State<Activities>
         final response = await supabase
             .from('tbl_activity')
             .select()
-            .eq('child_id', childId);
+            .eq('child_id', childId)
+            .order('created_at', ascending: false);
+
 
         setState(() {
           _activities = List<Map<String, dynamic>>.from(response);
         });
-      }
+      } 
+      
     } catch (e) {
       print('Error fetching activities: $e');
     }
@@ -108,7 +111,7 @@ class _ActivitiesState extends State<Activities>
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
                     'Activities',
@@ -134,6 +137,7 @@ class _ActivitiesState extends State<Activities>
                           ),
                         )
                       : Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
                           children: _activities.map((activity) {
                             return Container(
                               margin: const EdgeInsets.only(bottom: 16),
@@ -151,7 +155,7 @@ class _ActivitiesState extends State<Activities>
                               child: Padding(
                                 padding: const EdgeInsets.all(16.0),
                                 child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.stretch,
                                   children: [
                                     Row(
                                       children: [
@@ -177,7 +181,14 @@ class _ActivitiesState extends State<Activities>
                                         activity['play_time_activities']),
                                     _activityRow(
                                         'Nap', activity['nap_schedule']),
+                                     
+                                      
+                                    const SizedBox(height: 10),
+                                   
+                               
                                   ],
+                                  
+                                  
                                 ),
                               ),
                             );
@@ -192,7 +203,7 @@ class _ActivitiesState extends State<Activities>
             child: Padding(
               padding: const EdgeInsets.all(16.0),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   const Text(
                     'Meal Plan',
